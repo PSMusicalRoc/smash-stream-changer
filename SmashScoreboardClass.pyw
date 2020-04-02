@@ -5,12 +5,12 @@ import shutil
 import sys, os
 
 class SmashScoreboard(Tk):
-  def __init__(self, *args, **kwargs):
+  def __init__(self, directory, *args, **kwargs):
     Tk.__init__(self, *args, **kwargs)
     self.iconbitmap("StreamScoreboard.ico")
     self.title("Smash Stream Scoreboard")
     
-    self.dir = "ImgCache\\Ultimate\\"
+    self.dir = "ImgCache\\" + directory
     
     characterList = open(self.dir+"_CharList.txt").readlines()
     i = 0
@@ -203,6 +203,3 @@ class SmashScoreboard(Tk):
         colnum = 1
         rownum += 1
       i+=1
-
-app = SmashScoreboard()
-app.mainloop()
