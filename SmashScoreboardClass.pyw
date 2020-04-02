@@ -9,58 +9,21 @@ class SmashScoreboard(Tk):
     Tk.__init__(self, *args, **kwargs)
     self.iconbitmap("StreamScoreboard.ico")
     self.title("Smash Stream Scoreboard")
-  
-  
+    
+    self.dir = "ImgCache\\Ultimate\\"
+    
+    characterList = open(self.dir+"_CharList.txt").readlines()
+    i = 0
+    for i in range(len(characterList)):
+      characterList[i] = characterList[i].replace("\n", "")
   #-----------------------COPYPASTE OLD CODE--------------------------
-    characterList = ["Bowser",
-    "Charizard",
-    "Climbers",
-    "Dedede",
-    "Diddy",
-    "DK",
-    "Falco",
-    "Falcon",
-    "Fox",
-    "Gameandwatch",
-    "Ganon",
-    "Ike",
-    "Ivysaur",
-    "Jigglypuff",
-    "Kirby",
-    "Knuckles",
-    "Link",
-    "Lucario",
-    "Lucas",
-    "Luigi",
-    "Mario",
-    "Marth",
-    "Metaknight",
-    "Mewtwo",
-    "Ness",
-    "Olimar",
-    "Peach",
-    "Pika",
-    "Pit",
-    "ROB",
-    "Roy",
-    "Samus",
-    "Sheik",
-    "Snake",
-    "Sonic",
-    "Squirtle",
-    "Toonlink",
-    "Wario",
-    "Wolf",
-    "Yoshi",
-    "Zelda",
-    "Zerosuit" ]
     
     mainframe = ttk.Frame(self, padding="3 3 12 12")
     mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 
     #Defining the Left Panel's Functionality
     self.SkinP1 = StringVar()
-    self.SkinP1.set("pics\\Mario\\Mario_01.png")
+    self.SkinP1.set(self.dir + "Mario\\Mario_01.png")
 
     self.leftpanel = ttk.Frame(mainframe, padding="10 10 10 10")
     self.leftpanel.grid(column=1, row=1, sticky=(N, W, E, S))
@@ -126,7 +89,7 @@ class SmashScoreboard(Tk):
 
     #Defining the Right Panel's Functionality
     self.SkinP2 = StringVar()
-    self.SkinP2.set("pics\\Mario\\Mario_01.png")
+    self.SkinP2.set(self.dir + "Mario\\Mario_01.png")
 
     self.rightpanel = ttk.Frame(mainframe, padding="10 10 10 10")
     self.rightpanel.grid(column=3, row=1, sticky=(N, W, S, E))
@@ -153,8 +116,8 @@ class SmashScoreboard(Tk):
     
     p1s = self.Score1.get()
     p2s = self.Score2.get()
-    shutil.copyfile("pics\\_ScoreNumbers\\_num_"+str(p1s)+".png", "output\\p1Score.png")
-    shutil.copyfile("pics\\_ScoreNumbers\\_num_"+str(p2s)+".png", "output\\p2Score.png")
+    shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p1s)+".png", "output\\p1Score.png")
+    shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p2s)+".png", "output\\p2Score.png")
     
   def buttonDo(self, *args, **kwargs):
     targetImg = args[0]
@@ -173,7 +136,7 @@ class SmashScoreboard(Tk):
     self.newleftpanel = ttk.Frame(self.leftpanel, padding="10 10 10 10")
     self.newleftpanel.grid(column=1, row=1, sticky=(N, W, E, S))
     char1 = str(self.Char1.get())
-    dir1 = "pics\\"+char1+"\\"
+    dir1 = self.dir+char1+"\\"
     fail = False
     list1 = []
     i = 1
@@ -211,7 +174,7 @@ class SmashScoreboard(Tk):
     self.newrightpanel = ttk.Frame(self.rightpanel, padding="10 10 10 10")
     self.newrightpanel.grid(column=1, row=1, sticky=(N, W, E, S))
     char2 = str(self.Char2.get())
-    dir2 = "pics\\"+char2+"\\"
+    dir2 = self.dir+char2+"\\"
     fail = False
     list2 = []
     i = 1
