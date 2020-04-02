@@ -24,8 +24,14 @@ def updateStream():
   file2 = open("Name2.txt", "w")
   file2.write(name2)
   file2.close()
+  
   shutil.copyfile(SkinP1.get(), "output\\p1Img.png")
   shutil.copyfile(SkinP2.get(), "output\\p2Img.png")
+  
+  p1s = Score1.get()
+  p2s = Score2.get()
+  shutil.copyfile("pics\\_ScoreNumbers\\_num_"+str(p1s)+".png", "output\\p1Score.png")
+  shutil.copyfile("pics\\_ScoreNumbers\\_num_"+str(p2s)+".png", "output\\p2Score.png")
 
 def getButtons(var1=0, var2=0, var3=0):
   try:
@@ -178,6 +184,11 @@ Char1.set("Mario")
 Char2 = StringVar()
 Char2.set("Mario")
 
+Score1 = IntVar()
+Score1.set(0)
+Score2 = IntVar()
+Score2.set(0)
+
 ttk.Label(midpanel, text="Player 1 Name:").grid(column=1, row=1, sticky=(N, W, S, E))
 ttk.Label(midpanel, text="Player 2 Name:").grid(column=3, row=1, sticky=(N, W, S, E))
 
@@ -197,6 +208,26 @@ charSelect2.grid(column=3, row=3, sticky=(N, S, E, W))
 
 ttk.Label(midpanel, textvar=Char1).grid(column=1, row=4, sticky=(N, S, E, W))
 ttk.Label(midpanel, textvar=Char2).grid(column=3, row=4, sticky=(N, S, E, W))
+
+ttk.Frame(midpanel, height=200, width=200).grid(column=2, row=5, sticky=(N, S, E, W))
+
+ttk.Label(midpanel, text="P1 Score").grid(column=1, row=6, sticky=(N, S, E, W))
+ttk.Label(midpanel, text="P2 Score").grid(column=3, row=6, sticky=(N, S, E, W))
+
+"""   CREATE RADIO BUTTON HERE --------------------------------------------------------   """
+ttk.Radiobutton(midpanel, text="0", variable=Score1, value=0).grid(column=1, row=7, sticky=(N, W, S, E))
+ttk.Radiobutton(midpanel, text="1", variable=Score1, value=1).grid(column=1, row=8, sticky=(N, W, S, E))
+ttk.Radiobutton(midpanel, text="2", variable=Score1, value=2).grid(column=1, row=9, sticky=(N, W, S, E))
+ttk.Radiobutton(midpanel, text="3", variable=Score1, value=3).grid(column=1, row=10, sticky=(N, W, S, E))
+ttk.Radiobutton(midpanel, text="4", variable=Score1, value=4).grid(column=1, row=11, sticky=(N, W, S, E))
+ttk.Radiobutton(midpanel, text="5", variable=Score1, value=5).grid(column=1, row=12, sticky=(N, W, S, E))
+
+ttk.Radiobutton(midpanel, text="0", variable=Score2, value=0).grid(column=3, row=7, sticky=(N, W, S, E))
+ttk.Radiobutton(midpanel, text="1", variable=Score2, value=1).grid(column=3, row=8, sticky=(N, W, S, E))
+ttk.Radiobutton(midpanel, text="2", variable=Score2, value=2).grid(column=3, row=9, sticky=(N, W, S, E))
+ttk.Radiobutton(midpanel, text="3", variable=Score2, value=3).grid(column=3, row=10, sticky=(N, W, S, E))
+ttk.Radiobutton(midpanel, text="4", variable=Score2, value=4).grid(column=3, row=11, sticky=(N, W, S, E))
+ttk.Radiobutton(midpanel, text="5", variable=Score2, value=5).grid(column=3, row=12, sticky=(N, W, S, E))
 #INSIDE THE PANEL
 
 #Defining the Right Panel's Functionality
