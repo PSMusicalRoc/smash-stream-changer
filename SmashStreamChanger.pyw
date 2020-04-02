@@ -116,6 +116,7 @@ def getButtons(var1=0, var2=0, var3=0):
 #TTK BEGINS
 root = Tk()
 root.title("Stream Changer")
+root.iconbitmap(default="StreamScoreboard.ico")
 
 #System Variables
 characterList = ["Bowser",
