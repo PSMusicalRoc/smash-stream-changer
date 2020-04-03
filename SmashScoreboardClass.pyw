@@ -65,8 +65,17 @@ class SmashScoreboard(Tk):
 
     ttk.Label(self.midpanel, textvar=self.Char1).grid(column=1, row=4, sticky=(N, S, E, W))
     ttk.Label(self.midpanel, textvar=self.Char2).grid(column=3, row=4, sticky=(N, S, E, W))
-
-    ttk.Frame(self.midpanel, height=200, width=200).grid(column=2, row=5, sticky=(N, S, E, W))
+    
+    self.BracketPhase = StringVar()
+    self.BracketPhase.set("Round 1 Pools")
+    self.Commentators = StringVar()
+    self.Commentators.set("Commentator List")
+    self.midframe = ttk.Frame(self.midpanel, padding="10 10 10 10", borderwidth=8, relief="solid")
+    self.midframe.grid(column=1, row=5, columnspan=3, sticky=(N, S, E, W))
+    ttk.Label(self.midframe, text="Bracket Phase:", anchor="center").grid(row=1, column=1, sticky=(N, S, E, W))
+    ttk.Entry(self.midframe, width=40, textvariable=self.BracketPhase).grid(row=2, column=1, sticky=(N, S, E, W))
+    ttk.Label(self.midframe, text="Commentators:", anchor="center").grid(row=3, column=1, sticky=(N, S, E, W))
+    ttk.Entry(self.midframe, width=60, textvariable=self.Commentators).grid(row=4, column=1, sticky=(N, S, E, W))
 
     ttk.Label(self.midpanel, text="P1 Score").grid(column=1, row=6, sticky=(N, S, E, W))
     ttk.Label(self.midpanel, text="P2 Score").grid(column=3, row=6, sticky=(N, S, E, W))
@@ -100,16 +109,38 @@ class SmashScoreboard(Tk):
     self.getButtons()
   
   def updateStream(self):
-    os.remove("Name1.txt")
+    try:
+      os.remove("output\\Name1.txt")
+    except:
+      pass
     name1 = str(self.Name1.get())
-    file1 = open("Name1.txt", "w")
-    file1.write(name1)
-    file1.close()
-    os.remove("Name2.txt")
+    file = open("output\\Name1.txt", "w")
+    file.write(name1)
+    file.close()
+    try:
+      os.remove("output\\Name2.txt")
+    except:
+      pass
     name2 = str(self.Name2.get())
-    file2 = open("Name2.txt", "w")
-    file2.write(name2)
-    file2.close()
+    file = open("output\\Name2.txt", "w")
+    file.write(name2)
+    file.close()
+    try:
+      os.remove("output\\CommentatorList.txt")
+    except:
+      pass
+    comment = str(self.Commentators.get())
+    file = open("output\\CommentatorList.txt", "w")
+    file.write(comment)
+    file.close()
+    try:
+      os.remove("output\\BracketPhase.txt")
+    except:
+      pass
+    phase = str(self.BracketPhase.get())
+    file = open("output\\BracketPhase.txt", "w")
+    file.write(phase)
+    file.close()
     
     shutil.copyfile(self.SkinP1.get(), "output\\p1Img.png")
     shutil.copyfile(self.SkinP2.get(), "output\\p2Img.png")
@@ -134,7 +165,6 @@ class SmashScoreboard(Tk):
     except:
       pass
     self.newleftpanel = ttk.Frame(self.leftpanel, padding="10 10 10 10")
-    self.newleftpanel.grid(column=1, row=1, sticky=(N, W, E, S))
     char1 = str(self.Char1.get())
     dir1 = self.dir+char1+"\\"
     fail = False
@@ -165,6 +195,8 @@ class SmashScoreboard(Tk):
         colnum = 1
         rownum += 1
       i+=1
+    self.newleftpanel.grid(column=1, row=1, sticky=(N, W, E, S))
+
     
     #RIGHT PANEL
     try:
@@ -172,7 +204,6 @@ class SmashScoreboard(Tk):
     except:
       pass
     self.newrightpanel = ttk.Frame(self.rightpanel, padding="10 10 10 10")
-    self.newrightpanel.grid(column=1, row=1, sticky=(N, W, E, S))
     char2 = str(self.Char2.get())
     dir2 = self.dir+char2+"\\"
     fail = False
@@ -203,3 +234,4 @@ class SmashScoreboard(Tk):
         colnum = 1
         rownum += 1
       i+=1
+    self.newrightpanel.grid(column=1, row=1, sticky=(N, W, E, S))

@@ -1,21 +1,16 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import font
+from tkinter import messagebox
 from SmashScoreboardClass import SmashScoreboard
-import os
+import os, sys
 
 def start():
   dir = targetDir.get()
   root.destroy()
   board = SmashScoreboard(dir)
   board.mainloop()
-  
 
-root = Tk()
-root.title("Smash Stream Scoreboard")
-root.iconbitmap("StreamScoreboard.ico")
-
-targetDir = StringVar()
 folderList = []
 
 for folder in os.walk("ImgCache\\"):
@@ -25,7 +20,14 @@ for folder in os.walk("ImgCache\\"):
   else:
     pass
 
-print(folderList)
+if folderList == []:
+  messagebox.showerror("Error", "The directory 'ImgCache' or the folders inside it do not exist.")
+  sys.exit()
+
+root = Tk()
+root.title("Smash Stream Scoreboard")
+root.iconbitmap("StreamScoreboard.ico")
+targetDir = StringVar()
 
 ttk.Label(root, text="Choose the icon set to use:").grid(column=1, row=1, sticky=(N, S, E, W))
 rownum = 2
