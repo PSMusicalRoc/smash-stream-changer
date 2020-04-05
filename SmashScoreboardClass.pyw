@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from PIL import Image, ImageTk
 import shutil
-import sys, os
+import sys, os, json, math
 
 class SmashScoreboard(Tk):
   def __init__(self, directory, *args, **kwargs):
@@ -11,6 +11,12 @@ class SmashScoreboard(Tk):
     self.title("Smash Stream Scoreboard")
     
     self.dir = "ImgCache\\" + directory
+    
+#------------CONFIG.JSON LOAD-----------------------------------------
+    self.configLoad()
+    
+    
+#------------CONFIG.JSON LOADED---------------------------------------
     
     characterList = open(self.dir+"_CharList.txt").readlines()
     i = 0
@@ -185,7 +191,16 @@ class SmashScoreboard(Tk):
     colnum = 1
     i = 1
     for img in list1:
-      tkimg = PhotoImage(file=img)
+      image = Image.open(img)
+      w, h = image.size
+      if self.sizeratio == None and self.imgWidth != None and self.imgHeight != None:
+        resized = image.resize((self.imgWidth, self.imgHeight))
+        tkimg = ImageTk.PhotoImage(resized)
+      elif self.sizeratio != None and self.imgWidth == None and self.imgHeight == None:
+        resized = image.resize((math.ceil(w*self.sizeratio), math.ceil(h*self.sizeratio)))
+        tkimg = ImageTk.PhotoImage(resized)
+      else:
+        tkimg = ImageTk.PhotoImage(image)
       button = ttk.Button(self.newleftpanel, image=tkimg, text="Skin #"+str(i))
       button['command'] = lambda dir=img, kw="1" : self.buttonDo(dir, targPlayer=kw)
       button.grid(column=colnum, row=rownum, sticky=(N, S, E, W))
@@ -224,7 +239,16 @@ class SmashScoreboard(Tk):
     colnum = 1
     i = 1
     for img in list2:
-      tkimg = PhotoImage(file=img)
+      image = Image.open(img)
+      w, h = image.size
+      if self.sizeratio == None and self.imgWidth != None and self.imgHeight != None:
+        resized = image.resize((self.imgWidth, self.imgHeight))
+        tkimg = ImageTk.PhotoImage(resized)
+      elif self.sizeratio != None and self.imgWidth == None and self.imgHeight == None:
+        resized = image.resize((math.ceil(w*self.sizeratio), math.ceil(h*self.sizeratio)))
+        tkimg = ImageTk.PhotoImage(resized)
+      else:
+        tkimg = ImageTk.PhotoImage(image)
       button = ttk.Button(self.newrightpanel, image=tkimg, text="Skin #"+str(i))
       button['command'] = lambda dir=img, kw="2" : self.buttonDo(dir, targPlayer=kw)
       button.grid(column=colnum, row=rownum, sticky=(N, S, E, W))
@@ -235,3 +259,28 @@ class SmashScoreboard(Tk):
         rownum += 1
       i+=1
     self.newrightpanel.grid(column=1, row=1, sticky=(N, W, E, S))
+    
+  def configLoad(self):
+    #Load File
+    try:
+      self.configfile = json.load(open(self.dir+"config.json"))
+    except:
+      pass
+    #Set resize ratio
+    try:
+      self.sizeratio = int(self.configfile['size'])
+      if self.sizeratio >= 1:
+        pass
+      elif self.sizeratio <= -1:
+        self.sizeratio = 1/abs(self.sizeratio)
+      else:
+        self.sizeratio = 1
+    except:
+      self.sizeratio = 1
+    try:
+      self.imgWidth = abs(int(self.configfile['imgWidth']))
+      self.imgHeight = abs(int(self.configfile['imgHeight']))
+      self.sizeratio = None
+    except:
+      self.imgHeight = None
+      self.imgWidth = None
