@@ -43,9 +43,9 @@ class SmashScoreboard(Tk):
     self.Name1 = StringVar()
     self.Name2 = StringVar()
     self.Char1 = StringVar()
-    self.Char1.set("Mario")
+    self.Char1.set(characterList[0])
     self.Char2 = StringVar()
-    self.Char2.set("Mario")
+    self.Char2.set(characterList[0])
 
     self.Score1 = IntVar()
     self.Score1.set(0)
@@ -68,9 +68,6 @@ class SmashScoreboard(Tk):
     charSelect1.grid(column=1, row=3, sticky=(N, S, E, W))
     charSelect2 = OptionMenu(self.midpanel, self.Char2, *characterList)
     charSelect2.grid(column=3, row=3, sticky=(N, S, E, W))
-
-    ttk.Label(self.midpanel, textvar=self.Char1).grid(column=1, row=4, sticky=(N, S, E, W))
-    ttk.Label(self.midpanel, textvar=self.Char2).grid(column=3, row=4, sticky=(N, S, E, W))
     
     self.BracketPhase = StringVar()
     self.BracketPhase.set("Round 1 Pools")
