@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from PIL import Image, ImageTk
 import shutil
-import sys, os, json, math
+import sys, os, json, math, time
 
 class SmashScoreboard(Tk):
   def __init__(self, directory, *args, **kwargs):
@@ -168,6 +168,7 @@ class SmashScoreboard(Tk):
     except:
       pass
     self.newleftpanel = ttk.Frame(self.leftpanel, padding="10 10 10 10")
+    self.newleftpanel.grid(column=1, row=1, sticky=(N, W, E, S))
     char1 = str(self.Char1.get())
     dir1 = self.dir+char1+"\\"
     fail = False
@@ -200,14 +201,14 @@ class SmashScoreboard(Tk):
         tkimg = ImageTk.PhotoImage(image)
       button = ttk.Button(self.newleftpanel, image=tkimg, text="Skin #"+str(i))
       button['command'] = lambda dir=img, kw="1" : self.buttonDo(dir, targPlayer=kw)
-      button.grid(column=colnum, row=rownum, sticky=(N, S, E, W))
       button.image = tkimg
+      button.grid(column=colnum, row=rownum, sticky=(N, S, E, W))
+      time.sleep(.200)
       colnum += 1
       if colnum == 4:
         colnum = 1
         rownum += 1
       i+=1
-    self.newleftpanel.grid(column=1, row=1, sticky=(N, W, E, S))
 
     
     #RIGHT PANEL
@@ -216,6 +217,7 @@ class SmashScoreboard(Tk):
     except:
       pass
     self.newrightpanel = ttk.Frame(self.rightpanel, padding="10 10 10 10")
+    self.newrightpanel.grid(column=1, row=1, sticky=(N, W, E, S))
     char2 = str(self.Char2.get())
     dir2 = self.dir+char2+"\\"
     fail = False
@@ -248,14 +250,14 @@ class SmashScoreboard(Tk):
         tkimg = ImageTk.PhotoImage(image)
       button = ttk.Button(self.newrightpanel, image=tkimg, text="Skin #"+str(i))
       button['command'] = lambda dir=img, kw="2" : self.buttonDo(dir, targPlayer=kw)
-      button.grid(column=colnum, row=rownum, sticky=(N, S, E, W))
       button.image = tkimg
+      button.grid(column=colnum, row=rownum, sticky=(N, S, E, W))
+      time.sleep(.200)
       colnum += 1
       if colnum == 4:
         colnum = 1
         rownum += 1
       i+=1
-    self.newrightpanel.grid(column=1, row=1, sticky=(N, W, E, S))
     
   def configLoad(self):
     #Load File
