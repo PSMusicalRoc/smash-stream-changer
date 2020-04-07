@@ -9,8 +9,10 @@ class SmashScoreboard(Tk):
     Tk.__init__(self, *args, **kwargs)
     self.iconbitmap("StreamScoreboard.ico")
     self.title("Smash Stream Scoreboard")
+    self.BaseDirFile = open("directory.txt", "r")
+    self.BaseDir = self.BaseDirFile.read()
     
-    self.dir = "ImgCache\\" + directory
+    self.dir = r"" + self.BaseDir + "ImgCache\\" + directory
     
 #------------CONFIG.JSON LOAD-----------------------------------------
     self.configLoad()
@@ -113,45 +115,45 @@ class SmashScoreboard(Tk):
   
   def updateStream(self):
     try:
-      os.remove("output\\Name1.txt")
+      os.remove(r"" + self.BaseDir + "Output\\Name1.txt")
     except:
       pass
     name1 = str(self.Name1.get())
-    file = open("output\\Name1.txt", "w")
+    file = open(r"" + self.BaseDir + "Output\\Name1.txt", "w")
     file.write(name1)
     file.close()
     try:
-      os.remove("output\\Name2.txt")
+      os.remove(r"" + self.BaseDir + "Output\\Name2.txt")
     except:
       pass
     name2 = str(self.Name2.get())
-    file = open("output\\Name2.txt", "w")
+    file = open(r"" + self.BaseDir + "Output\\Name2.txt", "w")
     file.write(name2)
     file.close()
     try:
-      os.remove("output\\CommentatorList.txt")
+      os.remove(r"" + self.BaseDir + "Output\\CommentatorList.txt")
     except:
       pass
     comment = str(self.Commentators.get())
-    file = open("output\\CommentatorList.txt", "w")
+    file = open(r"" + self.BaseDir + "Output\\CommentatorList.txt", "w")
     file.write(comment)
     file.close()
     try:
-      os.remove("output\\BracketPhase.txt")
+      os.remove(r"" + self.BaseDir + "Output\\BracketPhase.txt")
     except:
       pass
     phase = str(self.BracketPhase.get())
-    file = open("output\\BracketPhase.txt", "w")
+    file = open(r"" + self.BaseDir + "Output\\BracketPhase.txt", "w")
     file.write(phase)
     file.close()
     
-    shutil.copyfile(self.SkinP1.get(), "output\\p1Img.png")
-    shutil.copyfile(self.SkinP2.get(), "output\\p2Img.png")
+    shutil.copyfile(self.SkinP1.get(), r"" + self.BaseDir + "Output\\p1Img.png")
+    shutil.copyfile(self.SkinP2.get(), r"" + self.BaseDir + "Output\\p2Img.png")
     
     p1s = self.Score1.get()
     p2s = self.Score2.get()
-    shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p1s)+".png", "output\\p1Score.png")
-    shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p2s)+".png", "output\\p2Score.png")
+    shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p1s)+".png", r"" + self.BaseDir + "Output\\p1Score.png")
+    shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p2s)+".png", r"" + self.BaseDir + "Output\\p2Score.png")
     
   def buttonDo(self, *args, **kwargs):
     targetImg = args[0]
@@ -203,7 +205,6 @@ class SmashScoreboard(Tk):
       button['command'] = lambda dir=img, kw="1" : self.buttonDo(dir, targPlayer=kw)
       button.image = tkimg
       button.grid(column=colnum, row=rownum, sticky=(N, S, E, W))
-      time.sleep(.200)
       colnum += 1
       if colnum == 4:
         colnum = 1
@@ -252,7 +253,6 @@ class SmashScoreboard(Tk):
       button['command'] = lambda dir=img, kw="2" : self.buttonDo(dir, targPlayer=kw)
       button.image = tkimg
       button.grid(column=colnum, row=rownum, sticky=(N, S, E, W))
-      time.sleep(.200)
       colnum += 1
       if colnum == 4:
         colnum = 1

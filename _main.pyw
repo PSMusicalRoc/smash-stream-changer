@@ -12,16 +12,18 @@ def start():
   board.mainloop()
 
 folderList = []
+BaseDirFile = open("directory.txt", "r")
+BaseDir = r"" + BaseDirFile.read()
 
-for folder in os.walk("ImgCache\\"):
-  output = folder[0].replace("ImgCache\\", "")
+for folder in os.walk(BaseDir + "ImgCache\\"):
+  output = folder[0].replace(BaseDir + "ImgCache\\", "")
   if output != "" and not "\\" in output:
     folderList.append(output+"\\")
   else:
     pass
 
 if folderList == []:
-  messagebox.showerror("Error", "The directory 'ImgCache' or the folders inside it do not exist.")
+  messagebox.showerror("Error", "The directory 'ImgCache' in 'My Documents' or the folders inside it do not exist.")
   sys.exit()
 
 root = Tk()
