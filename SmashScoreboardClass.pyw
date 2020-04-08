@@ -8,7 +8,7 @@ class SmashScoreboard(Tk):
   def __init__(self, directory, *args, **kwargs):
     Tk.__init__(self, *args, **kwargs)
     self.iconbitmap("StreamScoreboard.ico")
-    self.title("Smash Stream Scoreboard")
+    self.title("Smash Stream Scoreboard - Singles")
     self.BaseDirFile = open("directory.txt", "r")
     self.BaseDir = self.BaseDirFile.read()
     
@@ -20,10 +20,10 @@ class SmashScoreboard(Tk):
     
 #------------CONFIG.JSON LOADED---------------------------------------
     
-    characterList = open(self.dir+"_CharList.txt").readlines()
+    self.characterList = open(self.dir+"_CharList.txt").readlines()
     i = 0
-    for i in range(len(characterList)):
-      characterList[i] = characterList[i].replace("\n", "")
+    for i in range(len(self.characterList)):
+      self.characterList[i] = self.characterList[i].replace("\n", "")
   #-----------------------COPYPASTE OLD CODE--------------------------
     
     mainframe = ttk.Frame(self, padding="3 3 12 12")
@@ -45,9 +45,9 @@ class SmashScoreboard(Tk):
     self.Name1 = StringVar()
     self.Name2 = StringVar()
     self.Char1 = StringVar()
-    self.Char1.set(characterList[0])
+    self.Char1.set(self.characterList[0])
     self.Char2 = StringVar()
-    self.Char2.set(characterList[0])
+    self.Char2.set(self.characterList[0])
 
     self.Score1 = IntVar()
     self.Score1.set(0)
@@ -66,9 +66,9 @@ class SmashScoreboard(Tk):
     nameInput1 = ttk.Entry(self.midpanel, width=20, textvariable=self.Name2)
     nameInput1.grid(column=3, row=2, sticky=(N, W, S, E))
 
-    charSelect1 = OptionMenu(self.midpanel, self.Char1, *characterList)
+    charSelect1 = OptionMenu(self.midpanel, self.Char1, *self.characterList)
     charSelect1.grid(column=1, row=3, sticky=(N, S, E, W))
-    charSelect2 = OptionMenu(self.midpanel, self.Char2, *characterList)
+    charSelect2 = OptionMenu(self.midpanel, self.Char2, *self.characterList)
     charSelect2.grid(column=3, row=3, sticky=(N, S, E, W))
     
     self.BracketPhase = StringVar()
@@ -147,9 +147,9 @@ class SmashScoreboard(Tk):
     file.write(phase)
     file.close()
     
-    shutil.copyfile(self.SkinP1.get(), r"" + self.BaseDir + "Output\\p1Img.png")
-    shutil.copyfile(self.SkinP2.get(), r"" + self.BaseDir + "Output\\p2Img.png")
-    
+    self.outputImage(self.SkinP1.get(), r"" + self.BaseDir + "Output\\p1Img.png")
+    self.outputImage(self.SkinP2.get(), r"" + self.BaseDir + "Output\\p2Img.png")
+      
     p1s = self.Score1.get()
     p2s = self.Score2.get()
     shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p1s)+".png", r"" + self.BaseDir + "Output\\p1Score.png")
@@ -283,3 +283,22 @@ class SmashScoreboard(Tk):
     except:
       self.imgHeight = None
       self.imgWidth = None
+    #SET OUTPUT STANDARD SIZE
+    try:
+      self.outWidth = abs(int(self.configfile['outWidth']))
+      self.outHeight = abs(int(self.configfile['outHeight']))
+    except:
+      self.outWidth = None
+      self.outHeight = None
+      
+  def outputImage(self, skinDir, outputDir):
+    if self.outWidth == None or self.outHeight == None:
+      shutil.copyfile(skinDir, outputDir)
+    else:
+      outImg = Image.new("RGBA", (self.outWidth, self.outHeight))
+      charImg = Image.open(skinDir)
+      w, h = charImg.size
+      newwidth = math.ceil((self.outWidth - w)/2)
+      newheight = math.ceil((self.outHeight - h)/2)
+      outImg.paste(charImg, (newwidth, newheight))
+      outImg.save(outputDir)

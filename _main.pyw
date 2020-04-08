@@ -3,17 +3,78 @@ from tkinter import ttk
 from tkinter import font
 from tkinter import messagebox
 from SmashScoreboardClass import SmashScoreboard
-import os, sys
+from DoublesScoreboardClass import DoublesScoreboard
+import os, sys, json
+
+def jsonInit():
+  jsontext = json.load(open("Options\\Options.json", "r"))
+  print(jsontext)
+  return jsontext
 
 def start():
+  print(options)
+  if options['doubles'] == 1:
+    startDoubles()
+  elif options['doubles'] == 0:
+    startSingles()
+  else:
+    messagebox.showerror("Error", "Oops! Somehow, you aren't doing singles OR doubles! Go to 'Tools -> Options' and click the checkbox at least once!")
+
+def startSingles():
   dir = targetDir.get()
   root.destroy()
   board = SmashScoreboard(dir)
   board.mainloop()
+  
+def startDoubles():
+  dir = targetDir.get()
+  root.destroy()
+  board = DoublesScoreboard(dir)
+  board.mainloop()
+
+class OptionsMenu(Toplevel):
+  def __init__(self, *args, **kwargs):
+    Toplevel.__init__(self, *args, **kwargs)
+    self.options = json.load(open("Options\\Options.json"))
+    
+    self.iconbitmap("StreamScoreboard.ico")
+    
+    self.doubles = IntVar(value=int(self.options['doubles']))
+    
+    Label(self, text="Options", font=("Calibri", 20, "bold")).grid(column=2, row=1, sticky=(N, S, E, W))
+    
+    self.doubCheckbox = Checkbutton(self, variable=self.doubles, offvalue=0, onvalue=1)
+    self.doubCheckbox['text'] = "Doubles Mode"
+    self.doubCheckbox.grid(column=2, row=2, sticky=(N, S))
+    
+    self.okButton = Button(self, text="OK")
+    self.okButton['command'] = self.applyChanges
+    self.okButton.grid(column=2, row=99, sticky=(S))
+    self.cancelButton = Button(self, text="Cancel")
+    self.cancelButton['command'] = self.cancelChanges
+    self.cancelButton.grid(column=3, row=99, sticky=(S))
+    
+  def applyChanges(self):
+    self.options['doubles'] = int(self.doubles.get())
+    
+    with open("Options\\Options.json", "w") as outfile:
+      json.dump(self.options, outfile)
+    global options
+    options = jsonInit()
+    self.destroy()
+  
+  def cancelChanges(self):
+    self.destroy()
+
+def showOptions():
+  optionswindow = OptionsMenu()
+  optionswindow.mainloop()
 
 folderList = []
 BaseDirFile = open("directory.txt", "r")
 BaseDir = r"" + BaseDirFile.read()
+
+options = jsonInit()
 
 for folder in os.walk(BaseDir + "ImgCache\\"):
   output = folder[0].replace(BaseDir + "ImgCache\\", "")
@@ -30,6 +91,16 @@ root = Tk()
 root.title("Smash Stream Scoreboard")
 root.iconbitmap("StreamScoreboard.ico")
 targetDir = StringVar()
+
+"""MENUBAR STARTS HERE"""
+
+menubar = Menu(root)
+optionsmenu = Menu(menubar, tearoff=0)
+optionsmenu.add_command(label="Options", command=showOptions)
+menubar.add_cascade(label="Options", menu=optionsmenu)
+
+root.config(menu=menubar)
+"""MENUBAR ENDS HERE"""
 
 ttk.Label(root, text="Choose the icon set to use:").grid(column=1, row=1, sticky=(N, S, E, W))
 rownum = 2
