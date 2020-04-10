@@ -17,6 +17,8 @@ class DoublesScoreboard(SmashScoreboard):
     self.Char3.set(self.characterList[0])
     self.Char4 = StringVar()
     self.Char4.set(self.characterList[0])
+    self.OldChar3 = None
+    self.OldChar4 = None
 
     charSelect3 = OptionMenu(self.midpanel, self.Char3, *self.characterList)
     charSelect3.grid(column=1, row=99, sticky=(N, S, E, W))
@@ -30,99 +32,57 @@ class DoublesScoreboard(SmashScoreboard):
     self.getButtonsDoubs()
     
   def getButtonsDoubs(self, var1=0, var2=0, var3=0):
-    try:
-      self.lowleftpanel.destroy()
-    except:
-      pass
-    self.lowleftpanel = ttk.Frame(self.leftpanel, padding="10 10 10 10")
-    self.lowleftpanel.grid(column=1, row=2, sticky=(N, W, E, S))
-    char3 = str(self.Char3.get())
-    dir1 = self.dir+char3+"\\"
-    fail = False
-    list1 = []
-    i = 1
-    while not fail:
+    if self.OldChar3 != self.Char3.get():
       try:
-        if i < 10:
-          open(dir1+char3+"_0"+str(i)+".png")
-          list1.append(dir1+char3+"_0"+str(i)+".png")
-        elif i >= 10:
-          open(dir1+char3+"_"+str(i)+".png")
-          list1.append(dir1+char3+"_"+str(i)+".png")
+        self.lowleftpanel.destroy()
       except:
-        fail=True
-      i += 1
-    rownum = 1
-    colnum = 1
-    i = 1
-    for img in list1:
-      image = Image.open(img)
-      w, h = image.size
-      if self.sizeratio == None and self.imgWidth != None and self.imgHeight != None:
-        resized = image.resize((self.imgWidth, self.imgHeight))
-        tkimg = ImageTk.PhotoImage(resized)
-      elif self.sizeratio != None and self.imgWidth == None and self.imgHeight == None:
-        resized = image.resize((math.ceil(w*self.sizeratio), math.ceil(h*self.sizeratio)))
-        tkimg = ImageTk.PhotoImage(resized)
-      else:
-        tkimg = ImageTk.PhotoImage(image)
-      button = ttk.Button(self.lowleftpanel, image=tkimg, text="Skin #"+str(i))
-      button['command'] = lambda dir=img, kw="3" : self.buttonDo(dir, targPlayer=kw)
-      button.image = tkimg
-      button.grid(column=colnum, row=rownum, sticky=(N, S, E, W))
-      colnum += 1
-      if colnum == 4:
-        colnum = 1
-        rownum += 1
-      i+=1
+        pass
+      self.lowleftpanel = ttk.Frame(self.leftpanel, padding="10 10 10 10")
+      self.lowleftpanel.grid(column=1, row=2, sticky=(N, W, E, S))
+      char3 = str(self.Char3.get())
+      dir1 = self.dir+char3+"\\"
+      list1 = self.ButtonInstanceDictionary[char3]
+      rownum = 1
+      colnum = 1
+      i = 1
+      for img in list1:
+        button = ttk.Button(self.lowleftpanel, image=img, text="Skin #"+str(i))
+        button['command'] = lambda dir=self.imgDirList[self.ButtonInstanceDictionary[char3+"ID"]][i-1], kw="3" : self.buttonDo(dir, targPlayer=kw)
+        button.image = img
+        button.grid(column=colnum, row=rownum, sticky=(N, S, E, W))
+        colnum += 1
+        if colnum == 4:
+          colnum = 1
+          rownum += 1
+        i+=1
+      self.OldChar3 = self.Char3.get()
 
-    
-    #RIGHT PANEL
-    try:
-      self.lowrightpanel.destroy()
-    except:
-      pass
-    self.lowrightpanel = ttk.Frame(self.rightpanel, padding="10 10 10 10")
-    self.lowrightpanel.grid(column=1, row=2, sticky=(N, W, E, S))
-    char4 = str(self.Char4.get())
-    dir2 = self.dir+char4+"\\"
-    fail = False
-    list2 = []
-    i = 1
-    while not fail:
+      
+      #RIGHT PANEL
+    if self.OldChar4 != self.Char4.get():
       try:
-        if i < 10:
-          open(dir2+char4+"_0"+str(i)+".png")
-          list2.append(dir2+char4+"_0"+str(i)+".png")
-        elif i >= 10:
-          open(dir2+char4+"_"+str(i)+".png")
-          list2.append(dir2+char4+"_"+str(i)+".png")
+        self.lowrightpanel.destroy()
       except:
-        fail=True
-      i += 1
-    rownum = 1
-    colnum = 1
-    i = 1
-    for img in list2:
-      image = Image.open(img)
-      w, h = image.size
-      if self.sizeratio == None and self.imgWidth != None and self.imgHeight != None:
-        resized = image.resize((self.imgWidth, self.imgHeight))
-        tkimg = ImageTk.PhotoImage(resized)
-      elif self.sizeratio != None and self.imgWidth == None and self.imgHeight == None:
-        resized = image.resize((math.ceil(w*self.sizeratio), math.ceil(h*self.sizeratio)))
-        tkimg = ImageTk.PhotoImage(resized)
-      else:
-        tkimg = ImageTk.PhotoImage(image)
-      button = ttk.Button(self.lowrightpanel, image=tkimg, text="Skin #"+str(i))
-      button['command'] = lambda dir=img, kw="4" : self.buttonDo(dir, targPlayer=kw)
-      button.image = tkimg
-      button.grid(column=colnum, row=rownum, sticky=(N, S, E, W))
-      colnum += 1
-      if colnum == 4:
-        colnum = 1
-        rownum += 1
-      i+=1
+        pass
+      self.lowrightpanel = ttk.Frame(self.rightpanel, padding="10 10 10 10")
+      self.lowrightpanel.grid(column=1, row=2, sticky=(N, W, E, S))
+      char4 = str(self.Char4.get())
+      dir2 = self.dir+char4+"\\"
+      list2 = self.ButtonInstanceDictionary[char4]
+      rownum = 1
+      colnum = 1
+      i = 1
+      for img in list2:
+        button = ttk.Button(self.lowrightpanel, image=img, text="Skin #"+str(i))
+        button['command'] = lambda dir=self.imgDirList[self.ButtonInstanceDictionary[char4+"ID"]][i-1], kw="4" : self.buttonDo(dir, targPlayer=kw)
+        button.image = img
+        button.grid(column=colnum, row=rownum, sticky=(N, S, E, W))
+        colnum += 1
+        if colnum == 4:
+          colnum = 1
+          rownum += 1
+        i+=1
+      self.OldChar4 = self.Char4.get()
       
   def buttonDo(self, *args, **kwargs):
     targetImg = args[0]
