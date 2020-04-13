@@ -10,6 +10,7 @@ class DoublesScoreboard(SmashScoreboard):
   def __init__(self, directory, *args, **kwargs):
     SmashScoreboard.__init__(self, directory, *args, **kwargs)
     self.title("Smash Stream Scoreboard - Doubles")
+    self.geometry("1920x1080")
     
     self.SkinP3 = StringVar()
     self.SkinP4 = StringVar()
@@ -19,6 +20,9 @@ class DoublesScoreboard(SmashScoreboard):
     self.Char4.set(self.characterList[0])
     self.OldChar3 = None
     self.OldChar4 = None
+    
+    self.leftCanvas.configure(yscrollcommand=self.leftScroll.set, scrollregion=self.leftCanvas.bbox("ALL"))
+    self.leftpanel.bind("<Configure>", self.onFrameConfigure)
 
     charSelect3 = OptionMenu(self.midpanel, self.Char3, *self.characterList)
     charSelect3.grid(column=1, row=99, sticky=(N, S, E, W))
@@ -83,7 +87,7 @@ class DoublesScoreboard(SmashScoreboard):
           rownum += 1
         i+=1
       self.OldChar4 = self.Char4.get()
-      
+
   def buttonDo(self, *args, **kwargs):
     targetImg = args[0]
     if kwargs['targPlayer'] == "1":

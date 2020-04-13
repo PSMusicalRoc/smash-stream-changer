@@ -28,20 +28,28 @@ class SmashScoreboard(Tk):
     self.setupInitButtons()
   #-----------------------COPYPASTE OLD CODE--------------------------
     
-    mainframe = ttk.Frame(self, padding="3 3 12 12")
-    mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
+    self.mainframe = ttk.Frame(self, padding="3 3 12 12")
+    self.mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 
     #Defining the Left Panel's Functionality
     self.SkinP1 = StringVar()
     self.SkinP1.set(self.dir + "Mario\\Mario_01.png")
-
-    self.leftpanel = ttk.Frame(mainframe, padding="10 10 10 10")
-    self.leftpanel.grid(column=1, row=1, sticky=(N, W, E, S))
-
-
+    
+    self.leftCanvas = Canvas(self.mainframe)
+    self.leftCanvas.grid(column=1, row=1, sticky=(N, S, E, W))
+    self.leftScroll = ttk.Scrollbar(self.mainframe, orient="vertical", command=self.leftCanvas.yview)
+    self.leftScroll.grid(column=2, row=1, rowspan=2)
+    self.leftpanel = ttk.Frame(self.leftCanvas, padding="10 10 10 10")
+    self.leftCanvas.configure(yscrollcommand=self.leftScroll.set, scrollregion=self.leftCanvas.bbox("ALL"))
+    self.leftpanel.bind("<Configure>", self.onFrameConfigure)
+    self.leftScroll = ttk.Scrollbar(self.mainframe, orient="vertical", command=self.leftCanvas.yview)
+    self.leftScroll.grid(column=2, row=1, rowspan=2, sticky=(N, S))
+    self.leftCanvas.grid(column=1, row=1, sticky=(N, S, E, W))
+    self.leftCanvas.create_window((0, 0), window=self.leftpanel, anchor="nw")
+    
     #Defining the Middle Panel's Functionality
-    self.midpanel = ttk.Frame(mainframe, padding="10 10 10 10")
-    self.midpanel.grid(column=2, row=1, sticky=(N, W, S, E))
+    self.midpanel = ttk.Frame(self.mainframe, padding="10 10 10 10")
+    self.midpanel.grid(column=3, row=1, sticky=(N, W, S, E))
 
     #INSIDE THE PANEL
     self.Name1 = StringVar()
@@ -108,15 +116,27 @@ class SmashScoreboard(Tk):
     #Defining the Right Panel's Functionality
     self.SkinP2 = StringVar()
     self.SkinP2.set(self.dir + "Mario\\Mario_01.png")
-
-    self.rightpanel = ttk.Frame(mainframe, padding="10 10 10 10")
-    self.rightpanel.grid(column=3, row=1, sticky=(N, W, S, E))
+    
+    self.rightCanvas = Canvas(self.mainframe, height=1080)
+    self.rightCanvas.grid(column=4, row=1, sticky=(N, S, E, W))
+    self.rightScroll = ttk.Scrollbar(self.mainframe, orient="vertical", command=self.rightCanvas.yview)
+    self.rightScroll.grid(column=5, row=1, sticky=(N, S))
+    self.rightpanel = ttk.Frame(self.rightCanvas, padding="10 10 10 10")
+    self.rightCanvas.configure(yscrollcommand=self.rightScroll.set, scrollregion=self.rightCanvas.bbox("ALL"))
+    self.rightpanel.bind("<Configure>", self.onFrameConfigure)
+    self.rightScroll = ttk.Scrollbar(self.mainframe, orient="vertical", command=self.rightCanvas.yview)
+    self.rightCanvas.create_window((0, 0), window=self.rightpanel, anchor="nw")
     
     self.Char1.trace_variable("w",self.getButtons)
     self.Char2.trace_variable("w",self.getButtons)
     
     self.getButtons()
   
+  def onFrameConfigure(self, event):
+    '''Reset the scroll region to encompass the inner frame'''
+    self.leftCanvas.configure(scrollregion=self.leftCanvas.bbox("all"))
+    self.rightCanvas.configure(scrollregion=self.rightCanvas.bbox("all"))
+
   def updateStream(self):
     try:
       os.remove(r"" + self.BaseDir + "Output\\Name1.txt")
@@ -182,7 +202,6 @@ class SmashScoreboard(Tk):
       rownum = 1
       colnum = 1
       i = 1
-      #OUTPUTS AS NONE :/
       
       for img in list1:
         
