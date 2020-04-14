@@ -182,10 +182,13 @@ class SmashScoreboard(Tk):
     
   def buttonDo(self, *args, **kwargs):
     targetImg = args[0]
+    targetButton = kwargs['buttonID']
     if kwargs['targPlayer'] == "1":
       self.SkinP1.set(targetImg)
+      self.changeButtonColor(targetButton, self.Char1.get())
     elif kwargs['targPlayer'] == "2":
       self.SkinP2.set(targetImg)
+      self.changeButtonColor(targetButton, self.Char2.get())
     else:
       pass
       
@@ -195,7 +198,7 @@ class SmashScoreboard(Tk):
         self.newleftpanel.destroy()
       except:
         pass
-      self.newleftpanel = ttk.Frame(self.leftpanel, padding="10 10 10 10")
+      self.newleftpanel = ttk.Frame(self.leftpanel, padding="10 10 10 10", name="newleftpan")
       self.newleftpanel.grid(column=1, row=1, sticky=(N, W, E, S))
       char1 = str(self.Char1.get())
       dir1 = self.dir+char1+"\\"
@@ -205,9 +208,13 @@ class SmashScoreboard(Tk):
       i = 1
       
       for img in list1:
-        
-        button = ttk.Button(self.newleftpanel, image=img, text="Skin #"+str(i))
-        button['command'] = lambda dir=self.imgDirList[self.ButtonInstanceDictionary[char1+"ID"]][i-1], kw="1" : self.buttonDo(dir, targPlayer=kw)
+        if i < 10:
+          button = Button(self.newleftpanel, image=img, text="Skin #"+str(i), name="button0"+str(i))
+          tbutton = ".main.leftcanv.leftpan.newleftpan.button0"+str(i)
+        elif i >= 10:
+          button = Button(self.newleftpanel, image=img, text="Skin #"+str(i), name="button"+str(i))
+          tbutton = ".main.leftcanv.leftpan.newleftpan.button"+str(i)
+        button['command'] = lambda dir=self.imgDirList[self.ButtonInstanceDictionary[char1+"ID"]][i-1], kw="1", targButton=tbutton: self.buttonDo(dir, targPlayer=kw, buttonID=targButton)
         button.image = img
         button.grid(column=colnum, row=rownum, sticky=(N, S, E, W))
         colnum += 1
@@ -223,7 +230,7 @@ class SmashScoreboard(Tk):
         self.newrightpanel.destroy()
       except:
         pass
-      self.newrightpanel = ttk.Frame(self.rightpanel, padding="10 10 10 10")
+      self.newrightpanel = ttk.Frame(self.rightpanel, padding="10 10 10 10", name="newrightpan")
       self.newrightpanel.grid(column=1, row=1, sticky=(N, W, E, S))
       char2 = str(self.Char2.get())
       dir2 = self.dir+char2+"\\"
@@ -232,8 +239,13 @@ class SmashScoreboard(Tk):
       colnum = 1
       i = 1
       for img in list2:
-        button = ttk.Button(self.newrightpanel, image=img, text="Skin #"+str(i))
-        button['command'] = lambda dir=self.imgDirList[self.ButtonInstanceDictionary[char2+"ID"]][i-1], kw="2" : self.buttonDo(dir, targPlayer=kw)
+        if i < 10:
+          button = Button(self.newrightpanel, image=img, text="Skin #"+str(i), name="button0"+str(i))
+          tbutton = ".main.rightcanv.rightpan.newrightpan.button0"+str(i)
+        elif i >= 10:
+          button = Button(self.newrightpanel, image=img, text="Skin #"+str(i), name="button"+str(i))
+          tbutton = ".main.rightcanv.rightpan.newrightpan.button"+str(i)
+        button['command'] = lambda dir=self.imgDirList[self.ButtonInstanceDictionary[char2+"ID"]][i-1], kw="2", targButton=tbutton: self.buttonDo(dir, targPlayer=kw, buttonID=targButton)
         button.image = img
         button.grid(column=colnum, row=rownum, sticky=(N, S, E, W))
         colnum += 1
@@ -242,6 +254,19 @@ class SmashScoreboard(Tk):
           rownum += 1
         i+=1
       self.OldChar2 = self.Char2.get()
+      
+  def changeButtonColor(self, targetButton, character):
+    for i in range(1, len(self.ButtonInstanceDictionary[character])+1):
+      if i < 10:
+        if targetButton.endswith("0" + str(i)):
+          self.nametowidget(targetButton)['bg'] = "blue"
+        else:
+          self.nametowidget(targetButton[:-2]+ "0" +str(i))['bg'] = 'white'
+      elif i >= 10:
+        if targetButton.endswith(str(i)):
+          self.nametowidget(targetButton)['bg'] = "blue"
+        else:
+          self.nametowidget(targetButton[:-2]+str(i))['bg'] = 'white'
     
   def configLoad(self):
     #Load File

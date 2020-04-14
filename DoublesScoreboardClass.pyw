@@ -47,8 +47,13 @@ class DoublesScoreboard(SmashScoreboard):
       colnum = 1
       i = 1
       for img in list1:
-        button = Button(self.lowleftpanel, image=img, text="Skin #"+str(i), name="button"+str(i))
-        button['command'] = lambda  dir=self.imgDirList[self.ButtonInstanceDictionary[char3+"ID"]][i-1], kw="3", targButton=".main.leftcanv.leftpan.lowleftpan.button"+str(i): self.buttonDo(dir, targPlayer=kw, buttonID=targButton)
+        if i < 10:
+          button = Button(self.lowleftpanel, image=img, text="Skin #"+str(i), name="button0"+str(i))
+          tbutton = ".main.leftcanv.leftpan.lowleftpan.button0"+str(i)
+        elif i >= 10:
+          button = Button(self.lowleftpanel, image=img, text="Skin #"+str(i), name="button"+str(i))
+          tbutton = ".main.leftcanv.leftpan.lowleftpan.button"+str(i)
+        button['command'] = lambda  dir=self.imgDirList[self.ButtonInstanceDictionary[char3+"ID"]][i-1], kw="3", targButton=tbutton: self.buttonDo(dir, targPlayer=kw, buttonID=targButton)
         button.image = img
         button.grid(column=colnum, row=rownum, sticky=(N, S, E, W))
         colnum += 1
@@ -74,8 +79,13 @@ class DoublesScoreboard(SmashScoreboard):
       colnum = 1
       i = 1
       for img in list2:
-        button = Button(self.lowrightpanel, image=img, text="Skin #"+str(i), name="button"+str(i))
-        button['command'] = lambda dir=self.imgDirList[self.ButtonInstanceDictionary[char4+"ID"]][i-1], kw="4", targButton=".main.rightcanv.rightpan.lowrightpan.button"+str(i): self.buttonDo(dir, targPlayer=kw, buttonID=targButton)
+        if i < 10:
+          button = Button(self.lowrightpanel, image=img, text="Skin #"+str(i), name="button0"+str(i))
+          tbutton = ".main.rightcanv.rightpan.lowrightpan.button0"+str(i)
+        elif i >= 10:
+          button = Button(self.lowrightpanel, image=img, text="Skin #"+str(i), name="button"+str(i))
+          tbutton = ".main.rightcanv.rightpan.lowrightpan.button"+str(i)
+        button['command'] = lambda dir=self.imgDirList[self.ButtonInstanceDictionary[char4+"ID"]][i-1], kw="4", targButton=tbutton: self.buttonDo(dir, targPlayer=kw, buttonID=targButton)
         button.image = img
         button.grid(column=colnum, row=rownum, sticky=(N, S, E, W))
         colnum += 1
@@ -88,10 +98,12 @@ class DoublesScoreboard(SmashScoreboard):
   def buttonDo(self, *args, **kwargs):
     targetImg = args[0]
     targetButton = kwargs['buttonID']
-    """if kwargs['targPlayer'] == "1":
+    if kwargs['targPlayer'] == "1":
       self.SkinP1.set(targetImg)
+      self.changeButtonColor(targetButton, self.Char1.get())
     elif kwargs['targPlayer'] == "2":
       self.SkinP2.set(targetImg)
+      self.changeButtonColor(targetButton, self.Char2.get())
     elif kwargs['targPlayer'] == "3":
       self.SkinP3.set(targetImg)
       self.changeButtonColor(targetButton, self.Char3.get())
@@ -99,16 +111,20 @@ class DoublesScoreboard(SmashScoreboard):
       self.SkinP4.set(targetImg)
       self.changeButtonColor(targetButton, self.Char4.get())
     else:
-      pass"""
-    print(targetButton)
+      pass
       
   def changeButtonColor(self, targetButton, character):
     for i in range(1, len(self.ButtonInstanceDictionary[character])+1):
-      if targetButton.endswith(str(i)):
-        self.nametowidget(targetButton)['bg'] = "blue"
-      else:
-        print(self.nametowidget(targetButton[:-1]+str(i)))
-        self.nametowidget(targetButton[:-1]+str(i))['bg'] = 'white'
+      if i < 10:
+        if targetButton.endswith("0" + str(i)):
+          self.nametowidget(targetButton)['bg'] = "blue"
+        else:
+          self.nametowidget(targetButton[:-2]+ "0" +str(i))['bg'] = 'white'
+      elif i >= 10:
+        if targetButton.endswith(str(i)):
+          self.nametowidget(targetButton)['bg'] = "blue"
+        else:
+          self.nametowidget(targetButton[:-2]+str(i))['bg'] = 'white'
 
   def updateStream(self):
     try:
