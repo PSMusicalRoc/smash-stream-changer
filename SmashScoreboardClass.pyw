@@ -26,20 +26,21 @@ class SmashScoreboard(Tk):
       self.characterList[i] = self.characterList[i].replace("\n", "")
       
     self.setupInitButtons()
-  #-----------------------COPYPASTE OLD CODE--------------------------
     
-    self.mainframe = ttk.Frame(self, padding="3 3 12 12")
+    self.CanvasWidth = self.ButtonInstanceDictionary[self.characterList[0]][0].width() * 3 + 100
+    
+    self.mainframe = ttk.Frame(self, padding="3 3 12 12", name="main")
     self.mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 
     #Defining the Left Panel's Functionality
     self.SkinP1 = StringVar()
     self.SkinP1.set(self.dir + "Mario\\Mario_01.png")
     
-    self.leftCanvas = Canvas(self.mainframe)
+    self.leftCanvas = Canvas(self.mainframe, width=self.CanvasWidth, name="leftcanv")
     self.leftCanvas.grid(column=1, row=1, sticky=(N, S, E, W))
     self.leftScroll = ttk.Scrollbar(self.mainframe, orient="vertical", command=self.leftCanvas.yview)
     self.leftScroll.grid(column=2, row=1, rowspan=2)
-    self.leftpanel = ttk.Frame(self.leftCanvas, padding="10 10 10 10")
+    self.leftpanel = ttk.Frame(self.leftCanvas, padding="10 10 10 10", name="leftpan")
     self.leftCanvas.configure(yscrollcommand=self.leftScroll.set, scrollregion=self.leftCanvas.bbox("ALL"))
     self.leftpanel.bind("<Configure>", self.onFrameConfigure)
     self.leftScroll = ttk.Scrollbar(self.mainframe, orient="vertical", command=self.leftCanvas.yview)
@@ -117,11 +118,11 @@ class SmashScoreboard(Tk):
     self.SkinP2 = StringVar()
     self.SkinP2.set(self.dir + "Mario\\Mario_01.png")
     
-    self.rightCanvas = Canvas(self.mainframe, height=1080)
+    self.rightCanvas = Canvas(self.mainframe, height=1080, width=self.CanvasWidth, name="rightcanv")
     self.rightCanvas.grid(column=4, row=1, sticky=(N, S, E, W))
     self.rightScroll = ttk.Scrollbar(self.mainframe, orient="vertical", command=self.rightCanvas.yview)
     self.rightScroll.grid(column=5, row=1, sticky=(N, S))
-    self.rightpanel = ttk.Frame(self.rightCanvas, padding="10 10 10 10")
+    self.rightpanel = ttk.Frame(self.rightCanvas, padding="10 10 10 10", name="rightpan")
     self.rightCanvas.configure(yscrollcommand=self.rightScroll.set, scrollregion=self.rightCanvas.bbox("ALL"))
     self.rightpanel.bind("<Configure>", self.onFrameConfigure)
     self.rightScroll = ttk.Scrollbar(self.mainframe, orient="vertical", command=self.rightCanvas.yview)

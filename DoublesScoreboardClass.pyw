@@ -20,9 +20,6 @@ class DoublesScoreboard(SmashScoreboard):
     self.Char4.set(self.characterList[0])
     self.OldChar3 = None
     self.OldChar4 = None
-    
-    self.leftCanvas.configure(yscrollcommand=self.leftScroll.set, scrollregion=self.leftCanvas.bbox("ALL"))
-    self.leftpanel.bind("<Configure>", self.onFrameConfigure)
 
     charSelect3 = OptionMenu(self.midpanel, self.Char3, *self.characterList)
     charSelect3.grid(column=1, row=99, sticky=(N, S, E, W))
@@ -41,7 +38,7 @@ class DoublesScoreboard(SmashScoreboard):
         self.lowleftpanel.destroy()
       except:
         pass
-      self.lowleftpanel = ttk.Frame(self.leftpanel, padding="10 10 10 10")
+      self.lowleftpanel = ttk.Frame(self.leftpanel, padding="10 10 10 10", name="lowleftpan")
       self.lowleftpanel.grid(column=1, row=2, sticky=(N, W, E, S))
       char3 = str(self.Char3.get())
       dir1 = self.dir+char3+"\\"
@@ -50,8 +47,8 @@ class DoublesScoreboard(SmashScoreboard):
       colnum = 1
       i = 1
       for img in list1:
-        button = ttk.Button(self.lowleftpanel, image=img, text="Skin #"+str(i))
-        button['command'] = lambda dir=self.imgDirList[self.ButtonInstanceDictionary[char3+"ID"]][i-1], kw="3" : self.buttonDo(dir, targPlayer=kw)
+        button = Button(self.lowleftpanel, image=img, text="Skin #"+str(i), name="button"+str(i))
+        button['command'] = lambda  dir=self.imgDirList[self.ButtonInstanceDictionary[char3+"ID"]][i-1], kw="3", targButton=".main.leftcanv.leftpan.lowleftpan.button"+str(i): self.buttonDo(dir, targPlayer=kw, buttonID=targButton)
         button.image = img
         button.grid(column=colnum, row=rownum, sticky=(N, S, E, W))
         colnum += 1
@@ -68,7 +65,7 @@ class DoublesScoreboard(SmashScoreboard):
         self.lowrightpanel.destroy()
       except:
         pass
-      self.lowrightpanel = ttk.Frame(self.rightpanel, padding="10 10 10 10")
+      self.lowrightpanel = ttk.Frame(self.rightpanel, padding="10 10 10 10", name="lowrightpan")
       self.lowrightpanel.grid(column=1, row=2, sticky=(N, W, E, S))
       char4 = str(self.Char4.get())
       dir2 = self.dir+char4+"\\"
@@ -77,8 +74,8 @@ class DoublesScoreboard(SmashScoreboard):
       colnum = 1
       i = 1
       for img in list2:
-        button = ttk.Button(self.lowrightpanel, image=img, text="Skin #"+str(i))
-        button['command'] = lambda dir=self.imgDirList[self.ButtonInstanceDictionary[char4+"ID"]][i-1], kw="4" : self.buttonDo(dir, targPlayer=kw)
+        button = Button(self.lowrightpanel, image=img, text="Skin #"+str(i), name="button"+str(i))
+        button['command'] = lambda dir=self.imgDirList[self.ButtonInstanceDictionary[char4+"ID"]][i-1], kw="4", targButton=".main.rightcanv.rightpan.lowrightpan.button"+str(i): self.buttonDo(dir, targPlayer=kw, buttonID=targButton)
         button.image = img
         button.grid(column=colnum, row=rownum, sticky=(N, S, E, W))
         colnum += 1
@@ -90,16 +87,28 @@ class DoublesScoreboard(SmashScoreboard):
 
   def buttonDo(self, *args, **kwargs):
     targetImg = args[0]
-    if kwargs['targPlayer'] == "1":
+    targetButton = kwargs['buttonID']
+    """if kwargs['targPlayer'] == "1":
       self.SkinP1.set(targetImg)
     elif kwargs['targPlayer'] == "2":
       self.SkinP2.set(targetImg)
     elif kwargs['targPlayer'] == "3":
       self.SkinP3.set(targetImg)
+      self.changeButtonColor(targetButton, self.Char3.get())
     elif kwargs['targPlayer'] == "4":
       self.SkinP4.set(targetImg)
+      self.changeButtonColor(targetButton, self.Char4.get())
     else:
-      pass
+      pass"""
+    print(targetButton)
+      
+  def changeButtonColor(self, targetButton, character):
+    for i in range(1, len(self.ButtonInstanceDictionary[character])+1):
+      if targetButton.endswith(str(i)):
+        self.nametowidget(targetButton)['bg'] = "blue"
+      else:
+        print(self.nametowidget(targetButton[:-1]+str(i)))
+        self.nametowidget(targetButton[:-1]+str(i))['bg'] = 'white'
 
   def updateStream(self):
     try:
