@@ -3,6 +3,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 import shutil
 import sys, os, json, math, time
+import pywinauto as pwa
 
 class SmashScoreboard(Tk):
   def __init__(self, directory, *args, **kwargs):
@@ -13,6 +14,12 @@ class SmashScoreboard(Tk):
     self.BaseDir = self.BaseDirFile.read()
     
     self.dir = r"" + self.BaseDir + "ImgCache\\" + directory
+    
+    try:
+      self.obsInstance = pwa.application.Application(backend="win32").connect(path=r"C:\Program Files (x86)\obs-studio\bin\64bit\obs64.exe")
+      self.obsWindow = self.obsInstance.top_window()
+    except:
+      messagebox.showerror("Warning", "WARNING: OBS is not currently active, some image display errors may occur.")
     
 #------------CONFIG.JSON LOAD-----------------------------------------
     self.configLoad()
@@ -112,6 +119,9 @@ class SmashScoreboard(Tk):
     ttk.Radiobutton(self.midpanel, text="3", variable=self.Score2, value=3).grid(column=3, row=10, sticky=(N, W, S, E))
     ttk.Radiobutton(self.midpanel, text="4", variable=self.Score2, value=4).grid(column=3, row=11, sticky=(N, W, S, E))
     ttk.Radiobutton(self.midpanel, text="5", variable=self.Score2, value=5).grid(column=3, row=12, sticky=(N, W, S, E))
+    
+    self.statusText = Label(self.midpanel, anchor="center", text="Status Text")
+    self.statusText.grid(row=99, column=2, sticky=(N, S))
     #INSIDE THE PANEL
 
     #Defining the Right Panel's Functionality
@@ -139,6 +149,8 @@ class SmashScoreboard(Tk):
     self.rightCanvas.configure(scrollregion=self.rightCanvas.bbox("all"))
 
   def updateStream(self):
+    self.statusText['text'] = "Working..."
+    failed = False
     try:
       os.remove(r"" + self.BaseDir + "Output\\Name1.txt")
     except:
@@ -172,13 +184,24 @@ class SmashScoreboard(Tk):
     file.write(phase)
     file.close()
     
-    self.outputImage(self.SkinP1.get(), r"" + self.BaseDir + "Output\\p1Img.png")
-    self.outputImage(self.SkinP2.get(), r"" + self.BaseDir + "Output\\p2Img.png")
+    self.obsWindow.type_keys("^%h")
+    
+    try:
+      self.outputImage(self.SkinP1.get(), r"" + self.BaseDir + "Output\\p1Img.png")
+      self.outputImage(self.SkinP2.get(), r"" + self.BaseDir + "Output\\p2Img.png")
+    except:
+      self.statusText['text'] = "Failed - Error!"
+      failed = True
+      
+    self.obsWindow.type_keys("^%s")
       
     p1s = self.Score1.get()
     p2s = self.Score2.get()
     shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p1s)+".png", r"" + self.BaseDir + "Output\\p1Score.png")
     shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p2s)+".png", r"" + self.BaseDir + "Output\\p2Score.png")
+    
+    if not failed:
+      self.statusText['text'] = "Job Completed!"
     
   def buttonDo(self, *args, **kwargs):
     targetImg = args[0]
@@ -311,7 +334,8 @@ class SmashScoreboard(Tk):
       newheight = math.ceil((self.outHeight - h)/2)
       outImg.paste(charImg, (newwidth, newheight))
       outImg.save(outputDir)
-
+      outImg.close()
+      
   def setupInitButtons(self):
     #list of the directories where images are
     i = 0

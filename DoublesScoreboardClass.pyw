@@ -5,6 +5,7 @@ from SmashScoreboardClass import SmashScoreboard
 from PIL import Image, ImageTk
 import shutil
 import sys, os, json, math, time
+import pywinauto as pwa
 
 class DoublesScoreboard(SmashScoreboard):
   def __init__(self, directory, *args, **kwargs):
@@ -127,6 +128,8 @@ class DoublesScoreboard(SmashScoreboard):
           self.nametowidget(targetButton[:-2]+str(i))['bg'] = 'white'
 
   def updateStream(self):
+    self.statusText['text'] = "Working..."
+    failed = False
     try:
       os.remove(r"" + self.BaseDir + "Output\\Name1.txt")
     except:
@@ -160,13 +163,24 @@ class DoublesScoreboard(SmashScoreboard):
     file.write(phase)
     file.close()
     
-    self.outputImage(self.SkinP1.get(), self.SkinP3.get(), r"" + self.BaseDir + "Output\\p1Img.png")
-    self.outputImage(self.SkinP2.get(), self.SkinP4.get(), r"" + self.BaseDir + "Output\\p2Img.png")
+    self.obsWindow.type_keys("^%h")
+    
+    try:
+      self.outputImage(self.SkinP1.get(), self.SkinP3.get(), r"" + self.BaseDir + "Output\\p1Img.png")
+      self.outputImage(self.SkinP2.get(), self.SkinP4.get(), r"" + self.BaseDir + "Output\\p2Img.png")
+    except:
+      self.statusText['text'] = "Failed - Error!"
+      failed = True
+      
+    self.obsWindow.type_keys("^%s")
       
     p1s = self.Score1.get()
     p2s = self.Score2.get()
     shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p1s)+".png", r"" + self.BaseDir + "Output\\p1Score.png")
     shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p2s)+".png", r"" + self.BaseDir + "Output\\p2Score.png")
+    
+    if not failed:
+      self.statusText['text'] = "Job Completed!"
 
   def outputImage(self, skinDir1, skinDir2, outputDir):
     if self.outWidth == None or self.outHeight == None:
