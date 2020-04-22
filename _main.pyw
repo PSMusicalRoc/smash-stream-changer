@@ -7,7 +7,7 @@ from DoublesScoreboardClass import DoublesScoreboard
 import os, sys, json
 
 def jsonInit():
-  jsontext = json.load(open("Options\\Options.json", "r"))
+  jsontext = json.load(open(BaseDir+"Options\\Options.json", "r"))
   print(jsontext)
   return jsontext
 
@@ -35,7 +35,7 @@ def startDoubles():
 class OptionsMenu(Toplevel):
   def __init__(self, *args, **kwargs):
     Toplevel.__init__(self, *args, **kwargs)
-    self.options = json.load(open("Options\\Options.json"))
+    self.options = json.load(open(BaseDir + "Options\\Options.json"))
     
     self.iconbitmap("StreamScoreboard.ico")
     
@@ -57,7 +57,7 @@ class OptionsMenu(Toplevel):
   def applyChanges(self):
     self.options['doubles'] = int(self.doubles.get())
     
-    with open("Options\\Options.json", "w") as outfile:
+    with open(BaseDir + "Options\\Options.json", "w") as outfile:
       json.dump(self.options, outfile)
     global options
     options = jsonInit()

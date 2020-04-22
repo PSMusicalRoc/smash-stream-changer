@@ -184,7 +184,11 @@ class SmashScoreboard(Tk):
     file.write(phase)
     file.close()
     
-    self.obsWindow.type_keys("^%h")
+    try:
+      self.obsWindow = self.obsInstance.top_window()
+      self.obsWindow.type_keys("^%h")
+    except:
+      pass
     
     try:
       self.outputImage(self.SkinP1.get(), r"" + self.BaseDir + "Output\\p1Img.png")
@@ -193,7 +197,10 @@ class SmashScoreboard(Tk):
       self.statusText['text'] = "Failed - Error!"
       failed = True
       
-    self.obsWindow.type_keys("^%s")
+    try:
+      self.obsWindow.type_keys("^%s")
+    except:
+      pass
       
     p1s = self.Score1.get()
     p2s = self.Score2.get()
@@ -330,6 +337,9 @@ class SmashScoreboard(Tk):
       outImg = Image.new("RGBA", (self.outWidth, self.outHeight))
       charImg = Image.open(skinDir)
       w, h = charImg.size
+      ratio = self.getRatio(w, h, self.outWidth, self.outHeight)
+      charImg = charImg.resize((math.floor(w*ratio), math.floor(h*ratio)))
+      w, h = charImg.size
       newwidth = math.ceil((self.outWidth - w)/2)
       newheight = math.ceil((self.outHeight - h)/2)
       outImg.paste(charImg, (newwidth, newheight))
@@ -378,3 +388,10 @@ class SmashScoreboard(Tk):
         fail=True
       i += 1
     return list
+    
+  def getRatio(self, width, height, outWidth, outHeight):
+    if width >= height:
+      ratio = outWidth/width
+    elif height > width:
+      ratio = outHeight/height
+    return ratio

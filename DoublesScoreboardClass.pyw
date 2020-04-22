@@ -163,7 +163,11 @@ class DoublesScoreboard(SmashScoreboard):
     file.write(phase)
     file.close()
     
-    self.obsWindow.type_keys("^%h")
+    try:
+      self.obsWindow = self.obsInstance.top_window()
+      self.obsWindow.type_keys("^%h")
+    except:
+      pass
     
     try:
       self.outputImage(self.SkinP1.get(), self.SkinP3.get(), r"" + self.BaseDir + "Output\\p1Img.png")
@@ -171,9 +175,12 @@ class DoublesScoreboard(SmashScoreboard):
     except:
       self.statusText['text'] = "Failed - Error!"
       failed = True
-      
-    self.obsWindow.type_keys("^%s")
-      
+    
+    try:
+      self.obsWindow.type_keys("^%s")
+    except:
+      pass
+    
     p1s = self.Score1.get()
     p2s = self.Score2.get()
     shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p1s)+".png", r"" + self.BaseDir + "Output\\p1Score.png")
