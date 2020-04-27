@@ -8,7 +8,10 @@ import os, sys, json
 
 def jsonInit():
   jsontext = json.load(open(BaseDir+"Options\\Options.json", "r"))
-  print(jsontext)
+  if jsontext['doubles'] == 1:
+    DoublesCheck.set("Yes")
+  elif jsontext['doubles'] == 0:
+    DoublesCheck.set("No")
   return jsontext
 
 def start():
@@ -74,8 +77,6 @@ folderList = []
 BaseDirFile = open("directory.txt", "r")
 BaseDir = r"" + BaseDirFile.read()
 
-options = jsonInit()
-
 for folder in os.walk(BaseDir + "ImgCache\\"):
   output = folder[0].replace(BaseDir + "ImgCache\\", "")
   if output != "" and not "\\" in output:
@@ -91,6 +92,9 @@ root = Tk()
 root.title("Smash Stream Scoreboard")
 root.iconbitmap("StreamScoreboard.ico")
 targetDir = StringVar()
+
+DoublesCheck = StringVar()
+options = jsonInit()
 
 """MENUBAR STARTS HERE"""
 
@@ -111,5 +115,11 @@ for name in folderList:
 targetDir.set(folderList[0])
 
 ttk.Button(root, text="Continue!", command=start).grid(column=1, row=rownum, sticky=(N, E, S, W))
+
+ttk.Frame(root, padding="50 50 50 50").grid(row=1, column=2)
+
+Label(root, text="Settings", anchor="center", font=("Calibri", 14, "bold")).grid(row=1, column=3, columnspan=2)
+Label(root, text="Doubles Activated? ", anchor="e").grid(row=2, column=3, sticky=E)
+Label(root, textvariable=DoublesCheck, font=("Calibri", 12, "bold"), anchor="w").grid(row=2, column=4, sticky=W)
 
 root.mainloop()

@@ -22,16 +22,64 @@ class DoublesScoreboard(SmashScoreboard):
     self.OldChar3 = None
     self.OldChar4 = None
 
-    charSelect3 = OptionMenu(self.midpanel, self.Char3, *self.characterList)
-    charSelect3.grid(column=1, row=99, sticky=(N, S, E, W))
-    Label(self.midpanel, text="Doubles Character Selectors").grid(row=99, column=2, sticky=(W, E))
-    charSelect4 = OptionMenu(self.midpanel, self.Char4, *self.characterList)
-    charSelect4.grid(column=3, row=99, sticky=(N, S, E, W))
+    #charSelect3 = OptionMenu(self.midpanel, self.Char3, *self.characterList)
+    self.charSelect3 = ttk.Treeview(self.midpanel)
+    self.charSelect3.grid(column=1, row=98, sticky=(N, S, E, W))
+    Label(self.midpanel, text="Doubles Character Selectors").grid(row=98, column=2, sticky=(W, E))
+    #charSelect4 = OptionMenu(self.midpanel, self.Char4, *self.characterList)
+    self.charSelect4 = ttk.Treeview(self.midpanel)
+    self.charSelect4.grid(column=3, row=98, sticky=(N, S, E, W))
+    
+    self.charSelect1.delete(*self.charSelect1.get_children())
+    self.charSelect2.delete(*self.charSelect2.get_children())
+    
+    for character in self.characterList:
+      if self.stockToggle:
+        try:
+          stockImg = Image.open(self.dir+"_Stocks\\"+character+".png")
+          stockImg = stockImg.resize((self.stockWidth, self.stockHeight))
+          tkimg = ImageTk.PhotoImage(stockImg)
+          self.stockImgDict[character] = tkimg
+          self.charSelect1.insert('', 'end', character, text=character, image=self.stockImgDict[character])
+          self.charSelect2.insert('', 'end', character, text=character, image=self.stockImgDict[character])
+          self.charSelect3.insert('', 'end', character, text=character, image=self.stockImgDict[character])
+          self.charSelect4.insert('', 'end', character, text=character, image=self.stockImgDict[character])
+        except:
+          self.charSelect1.insert('' , 'end', character, text=character)
+          self.charSelect2.insert('' , 'end', character, text=character)
+          self.charSelect3.insert('' , 'end', character, text=character)
+          self.charSelect4.insert('' , 'end', character, text=character)
+      else:
+        self.charSelect1.insert('' , 'end', character, text=character)
+        self.charSelect2.insert('' , 'end', character, text=character)
+        self.charSelect3.insert('' , 'end', character, text=character)
+        self.charSelect4.insert('' , 'end', character, text=character)
+        
+    self.charSelect3.bind("<Double-1>", self.getCharNameFromTreeview)
+    self.charSelect4.bind("<Double-1>", self.getCharNameFromTreeview)
     
     self.Char3.trace_variable("w",self.getButtonsDoubs)
     self.Char4.trace_variable("w",self.getButtonsDoubs)
     
     self.getButtonsDoubs()
+
+  def getCharNameFromTreeview(self, *args):
+    try:
+      self.Char1.set(self.charSelect1.selection()[0])
+    except:
+      pass
+    try:
+      self.Char2.set(self.charSelect2.selection()[0])
+    except:
+      pass
+    try:
+      self.Char3.set(self.charSelect3.selection()[0])
+    except:
+      pass
+    try:
+      self.Char4.set(self.charSelect4.selection()[0])
+    except:
+      pass
     
   def getButtonsDoubs(self, var1=0, var2=0, var3=0):
     if self.OldChar3 != self.Char3.get():
@@ -163,23 +211,23 @@ class DoublesScoreboard(SmashScoreboard):
     file.write(phase)
     file.close()
     
-    try:
+    """try:
       self.obsWindow = self.obsInstance.top_window()
       self.obsWindow.type_keys("^%h")
     except:
-      pass
+      pass"""
     
     try:
-      self.outputImage(self.SkinP1.get(), self.SkinP3.get(), r"" + self.BaseDir + "Output\\p1Img.png")
-      self.outputImage(self.SkinP2.get(), self.SkinP4.get(), r"" + self.BaseDir + "Output\\p2Img.png")
+      self.outputImage(self.SkinP1.get(), self.SkinP3.get(), r"" + self.BaseDir + "Output\\", 1)
+      self.outputImage(self.SkinP2.get(), self.SkinP4.get(), r"" + self.BaseDir + "Output\\", 2)
     except:
       self.statusText['text'] = "Failed - Error!"
       failed = True
     
-    try:
+    """try:
       self.obsWindow.type_keys("^%s")
     except:
-      pass
+      pass"""
     
     p1s = self.Score1.get()
     p2s = self.Score2.get()
@@ -189,7 +237,7 @@ class DoublesScoreboard(SmashScoreboard):
     if not failed:
       self.statusText['text'] = "Job Completed!"
 
-  def outputImage(self, skinDir1, skinDir2, outputDir):
+  def outputImage(self, skinDir1, skinDir2, outputDir, num):
     if self.outWidth == None or self.outHeight == None:
       messagebox.showerror("Error!", "Make sure that your 'config.json' file has the attributes 'outWidth' and 'outHeight'.")
     else:
@@ -209,7 +257,9 @@ class DoublesScoreboard(SmashScoreboard):
       newheight = outh - h
       outImg.paste(charbackImg, (0, 0))
       outImg.paste(charfrontImg, (newwidth, newheight), charfrontImg)
-      outImg.save(outputDir)
+      outImg.save(outputDir + "tmp" + str(num) + ".png")
+      shutil.copyfile(outputDir+"tmp"+str(num)+".png", outputDir+"p"+str(num)+"Img.png")
+      os.remove(outputDir+"tmp"+str(num)+".png")
       
   def getRatio(self, width, height, outWidth, outHeight):
     if width >= height:

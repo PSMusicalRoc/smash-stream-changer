@@ -3,7 +3,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 import shutil
 import sys, os, json, math, time
-import pywinauto as pwa
+#import pywinauto as pwa
 
 class SmashScoreboard(Tk):
   def __init__(self, directory, *args, **kwargs):
@@ -15,11 +15,11 @@ class SmashScoreboard(Tk):
     
     self.dir = r"" + self.BaseDir + "ImgCache\\" + directory
     
-    try:
+    """try:
       self.obsInstance = pwa.application.Application(backend="win32").connect(path=r"C:\Program Files (x86)\obs-studio\bin\64bit\obs64.exe")
       self.obsWindow = self.obsInstance.top_window()
     except:
-      messagebox.showerror("Warning", "WARNING: OBS is not currently active, some image display errors may occur.")
+      messagebox.showerror("Warning", "WARNING: OBS is not currently active, some image display errors may occur.")"""
     
 #------------CONFIG.JSON LOAD-----------------------------------------
     self.configLoad()
@@ -43,7 +43,7 @@ class SmashScoreboard(Tk):
     self.SkinP1 = StringVar()
     self.SkinP1.set(self.dir + "Mario\\Mario_01.png")
     
-    self.leftCanvas = Canvas(self.mainframe, width=self.CanvasWidth, name="leftcanv")
+    self.leftCanvas = Canvas(self.mainframe, width=self.CanvasWidth, height=1080, name="leftcanv")
     self.leftCanvas.grid(column=1, row=1, sticky=(N, S, E, W))
     self.leftScroll = ttk.Scrollbar(self.mainframe, orient="vertical", command=self.leftCanvas.yview)
     self.leftScroll.grid(column=2, row=1, rowspan=2)
@@ -52,7 +52,6 @@ class SmashScoreboard(Tk):
     self.leftpanel.bind("<Configure>", self.onFrameConfigure)
     self.leftScroll = ttk.Scrollbar(self.mainframe, orient="vertical", command=self.leftCanvas.yview)
     self.leftScroll.grid(column=2, row=1, rowspan=2, sticky=(N, S))
-    self.leftCanvas.grid(column=1, row=1, sticky=(N, S, E, W))
     self.leftCanvas.create_window((0, 0), window=self.leftpanel, anchor="nw")
     
     #Defining the Middle Panel's Functionality
@@ -86,10 +85,31 @@ class SmashScoreboard(Tk):
     nameInput1 = ttk.Entry(self.midpanel, width=20, textvariable=self.Name2)
     nameInput1.grid(column=3, row=2, sticky=(N, W, S, E))
 
-    charSelect1 = OptionMenu(self.midpanel, self.Char1, *self.characterList)
-    charSelect1.grid(column=1, row=3, sticky=(N, S, E, W))
-    charSelect2 = OptionMenu(self.midpanel, self.Char2, *self.characterList)
-    charSelect2.grid(column=3, row=3, sticky=(N, S, E, W))
+    #charSelect1 = OptionMenu(self.midpanel, self.Char1, *self.characterList)
+    self.charSelect1 = ttk.Treeview(self.midpanel)
+    self.charSelect1.grid(column=1, row=3, sticky=(N, S, E, W))
+    #charSelect2 = OptionMenu(self.midpanel, self.Char2, *self.characterList)
+    self.charSelect2 = ttk.Treeview(self.midpanel)
+    self.charSelect2.grid(column=3, row=3, sticky=(N, S, E, W))
+    self.stockImgDict = {}
+    style = ttk.Style(self)
+    style.configure('Treeview', rowheight=25)
+    
+    for character in self.characterList:
+      if self.stockToggle:
+        try:
+          stockImg = Image.open(self.dir+"_Stocks\\"+character+".png")
+          stockImg = stockImg.resize((self.stockWidth, self.stockHeight))
+          tkimg = ImageTk.PhotoImage(stockImg)
+          self.stockImgDict[character] = tkimg
+          self.charSelect1.insert('', 'end', character, text=character, image=self.stockImgDict[character])
+          self.charSelect2.insert('', 'end', character, text=character, image=self.stockImgDict[character])
+        except:
+          self.charSelect1.insert('' , 'end', character, text=character)
+          self.charSelect2.insert('' , 'end', character, text=character)
+      else:
+        self.charSelect1.insert('' , 'end', character, text=character)
+        self.charSelect2.insert('' , 'end', character, text=character)
     
     self.BracketPhase = StringVar()
     self.BracketPhase.set("Round 1 Pools")
@@ -98,7 +118,16 @@ class SmashScoreboard(Tk):
     self.midframe = ttk.Frame(self.midpanel, padding="10 10 10 10", borderwidth=8, relief="solid")
     self.midframe.grid(column=1, row=5, columnspan=3, sticky=(N, S, E, W))
     ttk.Label(self.midframe, text="Bracket Phase:", anchor="center").grid(row=1, column=1, sticky=(N, S, E, W))
-    ttk.Entry(self.midframe, width=40, textvariable=self.BracketPhase).grid(row=2, column=1, sticky=(N, S, E, W))
+    ttk.Combobox(self.midframe, width=40, textvariable=self.BracketPhase, values=["Winner's Round 1", 
+                                                                                  "Loser's Round 1",
+                                                                                  "Winner's Quarterfinals",
+                                                                                  "Loser's Quarterfinals",
+                                                                                  "Winner's Semifinals",
+                                                                                  "Loser's Semifinals",
+                                                                                  "Winner's Finals",
+                                                                                  "Loser's Finals",
+                                                                                  "Grand Finals",
+                                                                                  "True Finals"]).grid(row=2, column=1, sticky=(N, S, E, W))
     ttk.Label(self.midframe, text="Commentators:", anchor="center").grid(row=3, column=1, sticky=(N, S, E, W))
     ttk.Entry(self.midframe, width=60, textvariable=self.Commentators).grid(row=4, column=1, sticky=(N, S, E, W))
 
@@ -138,17 +167,32 @@ class SmashScoreboard(Tk):
     self.rightScroll = ttk.Scrollbar(self.mainframe, orient="vertical", command=self.rightCanvas.yview)
     self.rightCanvas.create_window((0, 0), window=self.rightpanel, anchor="nw")
     
+    self.charSelect1.bind("<Double-1>", self.getCharNameFromTreeview)
+    self.charSelect2.bind("<Double-1>", self.getCharNameFromTreeview)
+    
+    self.bind("<Return>", self.updateStream)
+    
     self.Char1.trace_variable("w",self.getButtons)
     self.Char2.trace_variable("w",self.getButtons)
     
     self.getButtons()
+    
+  def getCharNameFromTreeview(self, *args):
+    try:
+      self.Char1.set(self.charSelect1.selection()[0])
+    except:
+      pass
+    try:
+      self.Char2.set(self.charSelect2.selection()[0])
+    except:
+      pass
   
   def onFrameConfigure(self, event):
     '''Reset the scroll region to encompass the inner frame'''
     self.leftCanvas.configure(scrollregion=self.leftCanvas.bbox("all"))
     self.rightCanvas.configure(scrollregion=self.rightCanvas.bbox("all"))
 
-  def updateStream(self):
+  def updateStream(self, *args):
     self.statusText['text'] = "Working..."
     failed = False
     try:
@@ -184,23 +228,23 @@ class SmashScoreboard(Tk):
     file.write(phase)
     file.close()
     
-    try:
+    """try:
       self.obsWindow = self.obsInstance.top_window()
       self.obsWindow.type_keys("^%h")
     except:
-      pass
+      pass"""
     
     try:
-      self.outputImage(self.SkinP1.get(), r"" + self.BaseDir + "Output\\p1Img.png")
-      self.outputImage(self.SkinP2.get(), r"" + self.BaseDir + "Output\\p2Img.png")
+      self.outputImage(self.SkinP1.get(), r"" + self.BaseDir + "Output\\", 1)
+      self.outputImage(self.SkinP2.get(), r"" + self.BaseDir + "Output\\", 2)
     except:
       self.statusText['text'] = "Failed - Error!"
       failed = True
       
-    try:
+    """try:
       self.obsWindow.type_keys("^%s")
     except:
-      pass
+      pass"""
       
     p1s = self.Score1.get()
     p2s = self.Score2.get()
@@ -330,7 +374,26 @@ class SmashScoreboard(Tk):
       self.outWidth = None
       self.outHeight = None
       
-  def outputImage(self, skinDir, outputDir):
+    #SET WHETHER TO USE STOCK ICONS OR NOT
+    try:
+      if self.configfile['stockToggle'] == "True":
+        self.stockToggle = True
+      else:
+        self.stockToggle = False
+    except:
+      self.stockToggle = False
+    
+    if self.stockToggle:
+      try:
+        self.stockHeight = abs(int(self.configfile['stockHeight']))
+        self.stockWidth = abs(int(self.configfile['stockWidth']))
+      except:
+        self.stockHeight = 16
+        self.stockWidth = 16
+    else:
+      pass
+      
+  def outputImage(self, skinDir, outputDir, num):
     if self.outWidth == None or self.outHeight == None:
       shutil.copyfile(skinDir, outputDir)
     else:
@@ -343,7 +406,9 @@ class SmashScoreboard(Tk):
       newwidth = math.ceil((self.outWidth - w)/2)
       newheight = math.ceil((self.outHeight - h)/2)
       outImg.paste(charImg, (newwidth, newheight))
-      outImg.save(outputDir)
+      outImg.save(outputDir + "tmp"+str(num)+".png")
+      shutil.copyfile(outputDir+"tmp"+str(num)+".png", outputDir+"p"+str(num)+"Img.png")
+      os.remove(outputDir+"tmp"+str(num)+".png")
       outImg.close()
       
   def setupInitButtons(self):
