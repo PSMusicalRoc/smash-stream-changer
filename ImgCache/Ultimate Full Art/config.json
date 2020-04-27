@@ -2,5 +2,8 @@
 "imgWidth" : "175",
 "imgHeight" : "200",
 "outWidth" : "2228",
-"outHeight" : "2357"
+"outHeight" : "2357",
+"stockToggle" : "True",
+"stockHeight" : "24",
+"stockWidth" : "24"
 }

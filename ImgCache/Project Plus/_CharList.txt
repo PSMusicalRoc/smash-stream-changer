@@ -1,14 +1,14 @@
 Bowser
+Captain Falcon
 Charizard
-Climbers
 Dedede
-Diddy
-DK
+Diddy Kong
+Donkey Kong
 Falco
-Falcon
 Fox
-Gameandwatch
-Ganon
+Game and Watch
+Ganondorf
+Ice Climbers
 Ike
 Ivysaur
 Jigglypuff
@@ -20,12 +20,12 @@ Lucas
 Luigi
 Mario
 Marth
-Metaknight
+Meta Knight
 Mewtwo
 Ness
 Olimar
 Peach
-Pika
+Pikachu
 Pit
 ROB
 Roy
@@ -34,9 +34,9 @@ Sheik
 Snake
 Sonic
 Squirtle
-Toonlink
+Toon Link
 Wario
 Wolf
 Yoshi
 Zelda
-Zerosuit
+Zero Suit Samus
