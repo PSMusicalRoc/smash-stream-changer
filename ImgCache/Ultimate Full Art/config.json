@@ -5,5 +5,8 @@
 "outHeight" : "2357",
 "stockToggle" : "True",
 "stockHeight" : "24",
-"stockWidth" : "24"
+"stockWidth" : "24",
+"numImgHeight" : "32",
+"numImgWidth" : "40",
+"numImgToggle" : "True"
 }

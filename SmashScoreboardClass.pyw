@@ -55,7 +55,7 @@ class SmashScoreboard(Tk):
     self.leftCanvas.create_window((0, 0), window=self.leftpanel, anchor="nw")
     
     #Defining the Middle Panel's Functionality
-    self.midpanel = ttk.Frame(self.mainframe, padding="10 10 10 10")
+    self.midpanel = ttk.Frame(self.mainframe, padding="10 10 10 10", name="midpanel")
     self.midpanel.grid(column=3, row=1, sticky=(N, W, S, E))
 
     #INSIDE THE PANEL
@@ -72,9 +72,12 @@ class SmashScoreboard(Tk):
     self.Score1.set(0)
     self.Score2 = IntVar()
     self.Score2.set(0)
+    
+    self.ScoreMethod = StringVar()
+    self.ScoreMethod.set("Best of 5")
 
-    ttk.Label(self.midpanel, text="Player 1 Name:").grid(column=1, row=1, sticky=(N, W, S, E))
-    ttk.Label(self.midpanel, text="Player 2 Name:").grid(column=3, row=1, sticky=(N, W, S, E))
+    ttk.Label(self.midpanel, text="Player 1 Name:", name="p1label").grid(column=1, row=1, sticky=(N, W, S, E))
+    ttk.Label(self.midpanel, text="Player 2 Name:", name="p2label").grid(column=3, row=1, sticky=(N, W, S, E))
 
     nameInput1 = ttk.Entry(self.midpanel, width=20, textvariable=self.Name1)
     nameInput1.grid(column=1, row=2, sticky=(N, W, S, E))
@@ -118,7 +121,9 @@ class SmashScoreboard(Tk):
     self.midframe = ttk.Frame(self.midpanel, padding="10 10 10 10", borderwidth=8, relief="solid")
     self.midframe.grid(column=1, row=5, columnspan=3, sticky=(N, S, E, W))
     ttk.Label(self.midframe, text="Bracket Phase:", anchor="center").grid(row=1, column=1, sticky=(N, S, E, W))
-    ttk.Combobox(self.midframe, width=40, textvariable=self.BracketPhase, values=["Winner's Round 1", 
+    ttk.Combobox(self.midframe, width=40, textvariable=self.BracketPhase, values=["Round 1 Pools - Winners",
+                                                                                  "Round 1 Pools - Losers",
+                                                                                  "Winner's Round 1", 
                                                                                   "Loser's Round 1",
                                                                                   "Winner's Quarterfinals",
                                                                                   "Loser's Quarterfinals",
@@ -130,27 +135,43 @@ class SmashScoreboard(Tk):
                                                                                   "True Finals"]).grid(row=2, column=1, sticky=(N, S, E, W))
     ttk.Label(self.midframe, text="Commentators:", anchor="center").grid(row=3, column=1, sticky=(N, S, E, W))
     ttk.Entry(self.midframe, width=60, textvariable=self.Commentators).grid(row=4, column=1, sticky=(N, S, E, W))
+    
+    #--------INIT SCORING----------------------------------------------------------------------
+    ttk.Label(self.midpanel, text="Score Method Selector:").grid(row=7, column=2, sticky=(E))
+    self.ScoreMethodDropdown = OptionMenu(self.midpanel, self.ScoreMethod, *["Best of 5", "Number Selector"])
+    self.ScoreMethodDropdown.grid(row=7, column=3)
+    
+    self.scoreFrame = ttk.Frame(self.midpanel, padding="10 10 10 10", name="scorepan")
+    self.scoreFrame.grid(row=8, column=1, columnspan=3, sticky=(E, W))
 
-    ttk.Label(self.midpanel, text="P1 Score").grid(column=1, row=6, sticky=(N, S, E, W))
-    ttk.Label(self.midpanel, text="P2 Score").grid(column=3, row=6, sticky=(N, S, E, W))
+    """   CREATE SCORE RADIO BUTTON HERE --------------------------------------------------------   """
+    ttk.Label(self.scoreFrame, text="Scoring", anchor="center").grid(column=3, row=0, sticky=(N, S, E, W))
+    
+    ttk.Label(self.scoreFrame, text="P1 Score").grid(column=2, row=1, sticky=(N, S, E, W))
+    ttk.Label(self.scoreFrame, text="P2 Score").grid(column=4, row=1, sticky=(N, S, E, W))
+    
+    ttk.Radiobutton(self.scoreFrame, text="0", variable=self.Score1, value=0).grid(column=2, row=2, sticky=(N, W, S, E))
+    ttk.Radiobutton(self.scoreFrame, text="1", variable=self.Score1, value=1).grid(column=2, row=3, sticky=(N, W, S, E))
+    ttk.Radiobutton(self.scoreFrame, text="2", variable=self.Score1, value=2).grid(column=2, row=4, sticky=(N, W, S, E))
+    ttk.Radiobutton(self.scoreFrame, text="3", variable=self.Score1, value=3).grid(column=2, row=5, sticky=(N, W, S, E))
+    ttk.Radiobutton(self.scoreFrame, text="4", variable=self.Score1, value=4).grid(column=2, row=6, sticky=(N, W, S, E))
+    ttk.Radiobutton(self.scoreFrame, text="5", variable=self.Score1, value=5).grid(column=2, row=7, sticky=(N, W, S, E))
+    
+    #ttk.Label
 
-    """   CREATE RADIO BUTTON HERE --------------------------------------------------------   """
-    ttk.Radiobutton(self.midpanel, text="0", variable=self.Score1, value=0).grid(column=1, row=7, sticky=(N, W, S, E))
-    ttk.Radiobutton(self.midpanel, text="1", variable=self.Score1, value=1).grid(column=1, row=8, sticky=(N, W, S, E))
-    ttk.Radiobutton(self.midpanel, text="2", variable=self.Score1, value=2).grid(column=1, row=9, sticky=(N, W, S, E))
-    ttk.Radiobutton(self.midpanel, text="3", variable=self.Score1, value=3).grid(column=1, row=10, sticky=(N, W, S, E))
-    ttk.Radiobutton(self.midpanel, text="4", variable=self.Score1, value=4).grid(column=1, row=11, sticky=(N, W, S, E))
-    ttk.Radiobutton(self.midpanel, text="5", variable=self.Score1, value=5).grid(column=1, row=12, sticky=(N, W, S, E))
-
-    ttk.Radiobutton(self.midpanel, text="0", variable=self.Score2, value=0).grid(column=3, row=7, sticky=(N, W, S, E))
-    ttk.Radiobutton(self.midpanel, text="1", variable=self.Score2, value=1).grid(column=3, row=8, sticky=(N, W, S, E))
-    ttk.Radiobutton(self.midpanel, text="2", variable=self.Score2, value=2).grid(column=3, row=9, sticky=(N, W, S, E))
-    ttk.Radiobutton(self.midpanel, text="3", variable=self.Score2, value=3).grid(column=3, row=10, sticky=(N, W, S, E))
-    ttk.Radiobutton(self.midpanel, text="4", variable=self.Score2, value=4).grid(column=3, row=11, sticky=(N, W, S, E))
-    ttk.Radiobutton(self.midpanel, text="5", variable=self.Score2, value=5).grid(column=3, row=12, sticky=(N, W, S, E))
+    ttk.Radiobutton(self.scoreFrame, text="0", variable=self.Score2, value=0).grid(column=4, row=2, sticky=(N, W, S, E))
+    ttk.Radiobutton(self.scoreFrame, text="1", variable=self.Score2, value=1).grid(column=4, row=3, sticky=(N, W, S, E))
+    ttk.Radiobutton(self.scoreFrame, text="2", variable=self.Score2, value=2).grid(column=4, row=4, sticky=(N, W, S, E))
+    ttk.Radiobutton(self.scoreFrame, text="3", variable=self.Score2, value=3).grid(column=4, row=5, sticky=(N, W, S, E))
+    ttk.Radiobutton(self.scoreFrame, text="4", variable=self.Score2, value=4).grid(column=4, row=6, sticky=(N, W, S, E))
+    ttk.Radiobutton(self.scoreFrame, text="5", variable=self.Score2, value=5).grid(column=4, row=7, sticky=(N, W, S, E))
+    
+    self.scoreFrame.columnconfigure(1, weight=1)
+    self.scoreFrame.columnconfigure(3, weight=1)
+    self.scoreFrame.columnconfigure(5, weight=1)
     
     self.statusText = Label(self.midpanel, anchor="center", text="Status Text")
-    self.statusText.grid(row=99, column=2, sticky=(N, S))
+    self.statusText.grid(row=99, column=1, columnspan=3, sticky=(N, S))
     #INSIDE THE PANEL
 
     #Defining the Right Panel's Functionality
@@ -174,6 +195,7 @@ class SmashScoreboard(Tk):
     
     self.Char1.trace_variable("w",self.getButtons)
     self.Char2.trace_variable("w",self.getButtons)
+    self.ScoreMethod.trace_variable("w", self.changeScoreMethod)
     
     self.getButtons()
     
@@ -195,50 +217,70 @@ class SmashScoreboard(Tk):
   def updateStream(self, *args):
     self.statusText['text'] = "Working..."
     failed = False
+    #====================Delete Old Files==============================
     try:
       os.remove(r"" + self.BaseDir + "Output\\Name1.txt")
     except:
       pass
-    name1 = str(self.Name1.get())
-    file = open(r"" + self.BaseDir + "Output\\Name1.txt", "w")
-    file.write(name1)
-    file.close()
     try:
       os.remove(r"" + self.BaseDir + "Output\\Name2.txt")
     except:
       pass
-    name2 = str(self.Name2.get())
-    file = open(r"" + self.BaseDir + "Output\\Name2.txt", "w")
-    file.write(name2)
-    file.close()
     try:
       os.remove(r"" + self.BaseDir + "Output\\CommentatorList.txt")
     except:
       pass
-    comment = str(self.Commentators.get())
-    file = open(r"" + self.BaseDir + "Output\\CommentatorList.txt", "w")
-    file.write(comment)
-    file.close()
     try:
       os.remove(r"" + self.BaseDir + "Output\\BracketPhase.txt")
     except:
       pass
-    phase = str(self.BracketPhase.get())
-    file = open(r"" + self.BaseDir + "Output\\BracketPhase.txt", "w")
-    file.write(phase)
-    file.close()
     
-    """try:
-      self.obsWindow = self.obsInstance.top_window()
-      self.obsWindow.type_keys("^%h")
+    try:
+      name1 = str(self.Name1.get())
+      file = open(r"" + self.BaseDir + "Output\\Name1.txt", "w")
+      file.write(name1)
+      file.close()
     except:
-      pass"""
+      self.statusText['text'] = "Error - Check P1 Text - Are there non-ASCII characters there?"
+      self.statusText['fg'] = "red"
+      failed = True
+      
+    try:
+      name2 = str(self.Name2.get())
+      file = open(r"" + self.BaseDir + "Output\\Name2.txt", "w")
+      file.write(name2)
+      file.close()
+    except:
+      self.statusText['text'] = "Error - Check P2 Text - Are there non-ASCII characters there?"
+      self.statusText['fg'] = "red"
+      failed = True
+      
+    try:
+      comment = str(self.Commentators.get())
+      file = open(r"" + self.BaseDir + "Output\\CommentatorList.txt", "w")
+      file.write(comment)
+      file.close()
+    except:
+      self.statusText['text'] = "Error - Check Commentator List - Are there non-ASCII characters there?"
+      self.statusText['fg'] = "red"
+      failed = True
+      
+    try:
+      phase = str(self.BracketPhase.get())
+      file = open(r"" + self.BaseDir + "Output\\BracketPhase.txt", "w")
+      file.write(phase)
+      file.close()
+    except:
+      self.statusText['text'] = "Error - Check Bracket Phase - Are there non-ASCII characters there?"
+      self.statusText['fg'] = "red"
+      failed = True
     
     try:
       self.outputImage(self.SkinP1.get(), r"" + self.BaseDir + "Output\\", 1)
       self.outputImage(self.SkinP2.get(), r"" + self.BaseDir + "Output\\", 2)
     except:
-      self.statusText['text'] = "Failed - Error!"
+      self.statusText['text'] = "Error - Check Skin Selector Panels - Did you select a skin for each player?"
+      self.statusText['fg'] = "red"
       failed = True
       
     """try:
@@ -248,11 +290,19 @@ class SmashScoreboard(Tk):
       
     p1s = self.Score1.get()
     p2s = self.Score2.get()
-    shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p1s)+".png", r"" + self.BaseDir + "Output\\p1Score.png")
-    shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p2s)+".png", r"" + self.BaseDir + "Output\\p2Score.png")
+    #shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p1s)+".png", r"" + self.BaseDir + "Output\\p1Score.png")
+    #shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p2s)+".png", r"" + self.BaseDir + "Output\\p2Score.png")
+    
+    try:
+      self.updateScore()
+    except ValueError as err:
+      self.statusText['text'] = "Error - Check Score Inputs - Is the " + err.args[0] + "?"
+      self.statusText['fg'] = "red"
+      failed = True
     
     if not failed:
-      self.statusText['text'] = "Job Completed!"
+      self.statusText['text'] = "Stream Update Completed!"
+      self.statusText['fg'] = "green"
     
   def buttonDo(self, *args, **kwargs):
     targetImg = args[0]
@@ -392,6 +442,22 @@ class SmashScoreboard(Tk):
         self.stockWidth = 16
     else:
       pass
+    
+    try:
+      conf_numOutputMode = self.configfile['numImgToggle'].lower()
+      if conf_numOutputMode == "true":
+        self.numImgToggle = True
+      else:
+        self.numImgToggle = False
+    except:
+      self.numImgToggle = False
+    
+    try:
+      self.numHeight = abs(int(self.configfile['numImgHeight']))
+      self.numWidth = abs(int(self.configfile['numImgWidth']))
+    except:
+      self.numHeight = 30
+      self.numWidth = 30
       
   def outputImage(self, skinDir, outputDir, num):
     if self.outWidth == None or self.outHeight == None:
@@ -460,3 +526,139 @@ class SmashScoreboard(Tk):
     elif height > width:
       ratio = outHeight/height
     return ratio
+  
+  def changeScoreMethod(self, var1=0, var2=0, var3=0):
+    try:
+      self.scoreFrame.destroy()
+    except:
+      pass
+      
+    self.scoreFrame = ttk.Frame(self.midpanel, padding="10 10 10 10", name="scorepan")
+    self.scoreFrame.grid(row=8, column=1, columnspan=3, sticky=(E, W))
+      
+    if self.ScoreMethod.get() == "Best of 5":
+      ttk.Label(self.scoreFrame, text="Scoring", anchor="center").grid(column=3, row=0, sticky=(N, S, E, W))
+      
+      ttk.Label(self.scoreFrame, text="P1 Score").grid(column=2, row=1, sticky=(N, S, E, W))
+      ttk.Label(self.scoreFrame, text="P2 Score").grid(column=4, row=1, sticky=(N, S, E, W))
+      
+      ttk.Radiobutton(self.scoreFrame, text="0", variable=self.Score1, value=0).grid(column=2, row=2, sticky=(N, W, S, E))
+      ttk.Radiobutton(self.scoreFrame, text="1", variable=self.Score1, value=1).grid(column=2, row=3, sticky=(N, W, S, E))
+      ttk.Radiobutton(self.scoreFrame, text="2", variable=self.Score1, value=2).grid(column=2, row=4, sticky=(N, W, S, E))
+      ttk.Radiobutton(self.scoreFrame, text="3", variable=self.Score1, value=3).grid(column=2, row=5, sticky=(N, W, S, E))
+      ttk.Radiobutton(self.scoreFrame, text="4", variable=self.Score1, value=4).grid(column=2, row=6, sticky=(N, W, S, E))
+      ttk.Radiobutton(self.scoreFrame, text="5", variable=self.Score1, value=5).grid(column=2, row=7, sticky=(N, W, S, E))
+      
+      #ttk.Label
+
+      ttk.Radiobutton(self.scoreFrame, text="0", variable=self.Score2, value=0).grid(column=4, row=2, sticky=(N, W, S, E))
+      ttk.Radiobutton(self.scoreFrame, text="1", variable=self.Score2, value=1).grid(column=4, row=3, sticky=(N, W, S, E))
+      ttk.Radiobutton(self.scoreFrame, text="2", variable=self.Score2, value=2).grid(column=4, row=4, sticky=(N, W, S, E))
+      ttk.Radiobutton(self.scoreFrame, text="3", variable=self.Score2, value=3).grid(column=4, row=5, sticky=(N, W, S, E))
+      ttk.Radiobutton(self.scoreFrame, text="4", variable=self.Score2, value=4).grid(column=4, row=6, sticky=(N, W, S, E))
+      ttk.Radiobutton(self.scoreFrame, text="5", variable=self.Score2, value=5).grid(column=4, row=7, sticky=(N, W, S, E))
+      
+      self.scoreFrame.columnconfigure(1, weight=1)
+      self.scoreFrame.columnconfigure(3, weight=1)
+      self.scoreFrame.columnconfigure(5, weight=1)
+    
+    elif self.ScoreMethod.get() == "Number Selector":
+      ttk.Label(self.scoreFrame, text="Scoring", anchor="center").grid(column=3, row=0, sticky=(N, S, E, W))
+      
+      self.P1Spinbox = ttk.Spinbox(self.scoreFrame, from_=0, to=999)
+      self.P1Spinbox.set(0)
+      self.P1Spinbox.grid(row=1, column=2)
+      self.P2Spinbox = ttk.Spinbox(self.scoreFrame, from_=0, to=999)
+      self.P2Spinbox.set(0)
+      self.P2Spinbox.grid(row=1, column=4)
+      
+      self.scoreFrame.columnconfigure(1, weight=1)
+      self.scoreFrame.columnconfigure(3, weight=1)
+      self.scoreFrame.columnconfigure(5, weight=1)
+      
+  def updateScore(self):
+    try:
+      os.remove(r"" + self.BaseDir + "Output\\p1Score.txt")
+    except:
+      pass
+    try:
+      os.remove(r"" + self.BaseDir + "Output\\p2Score.txt")
+    except:
+      pass
+    try:
+      os.remove(r"" + self.BaseDir + "Output\\p1Score.png")
+    except:
+      pass
+    try:
+      os.remove(r"" + self.BaseDir + "Output\\p2Score.png")
+    except:
+      pass
+      
+    player = 1
+    broke = False
+    try:
+      if self.ScoreMethod.get() == "Number Selector":
+        if self.numImgToggle:
+          try:
+            score1 = int(self.P1Spinbox.get())
+            score2 = int(self.P2Spinbox.get())
+            print(score1, score2)
+          except:
+            broke = True
+            raise ValueError("number input not a number")
+            
+          for score in [score1, score2]:
+            scorestr = str(score)
+            if score < 1000 and score >= 0:
+              if score < 1000 and score >= 100:
+                outImg = Image.new("RGBA", (self.numWidth * 3, self.numHeight))
+              elif score < 100 and score >= 10:
+                outImg = Image.new("RGBA", (self.numWidth * 2, self.numHeight))
+              elif score < 10:
+                outImg = Image.new("RGBA", (self.numWidth * 1, self.numHeight))
+              i = 0
+              for num in scorestr:
+                try:
+                  imgPart = Image.open(self.dir + "_ScoreNumbers\\_num_" + num + ".png")
+                except:
+                  broke = True
+                  raise ValueError("image for the number not present in the files")
+                outImg.paste(imgPart, (self.numWidth * i, 0))
+                i += 1
+            else:
+              broke = True
+              raise ValueError("number above 999 or below 0")
+              
+            outImg.save(r"" + self.BaseDir + "Output\\p" + str(player) + "Score.png")
+            player += 1
+
+        else:
+          score1 = int(self.P1Spinbox.get())
+          score2 = int(self.P2Spinbox.get())
+          file = open(r"" + self.BaseDir + "Output\\p1Score.txt", "w")
+          file.write(str(score1))
+          file.close()
+          file = open(r"" + self.BaseDir + "Output\\p2Score.txt", "w")
+          file.write(str(score2))
+          file.close()
+      
+      else:
+        if self.numImgToggle:
+          p1s = self.Score1.get()
+          p2s = self.Score2.get()
+          shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p1s)+".png", r"" + self.BaseDir + "Output\\p1Score.png")
+          shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p2s)+".png", r"" + self.BaseDir + "Output\\p2Score.png")
+        else:
+          p1s = self.Score1.get()
+          p2s = self.Score2.get()
+          file = open(r"" + self.BaseDir + "Output\\p1Score.txt", "w")
+          file.write(str(p1s))
+          file.close()
+          file = open(r"" + self.BaseDir + "Output\\p2Score.txt", "w")
+          file.write(str(p2s))
+          file.close()
+          
+      
+    except ValueError as err:
+      if broke:
+        raise ValueError(err.args[0])

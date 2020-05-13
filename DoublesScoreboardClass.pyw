@@ -11,7 +11,9 @@ class DoublesScoreboard(SmashScoreboard):
   def __init__(self, directory, *args, **kwargs):
     SmashScoreboard.__init__(self, directory, *args, **kwargs)
     self.title("Smash Stream Scoreboard - Doubles")
-    self.geometry("1920x1080")
+    
+    self.nametowidget(".main.midpanel.p1label")['text'] = "Team 1 Name"
+    self.nametowidget(".main.midpanel.p2label")['text'] = "Team 2 Name"
     
     self.SkinP3 = StringVar()
     self.SkinP4 = StringVar()
@@ -175,67 +177,96 @@ class DoublesScoreboard(SmashScoreboard):
         else:
           self.nametowidget(targetButton[:-2]+str(i))['bg'] = 'white'
 
-  def updateStream(self):
+  def updateStream(self, *args):
     self.statusText['text'] = "Working..."
+    self.statusText['fg'] = "black"
     failed = False
+    #====================Delete Old Files==============================
     try:
       os.remove(r"" + self.BaseDir + "Output\\Name1.txt")
     except:
       pass
-    name1 = str(self.Name1.get())
-    file = open(r"" + self.BaseDir + "Output\\Name1.txt", "w")
-    file.write(name1)
-    file.close()
     try:
       os.remove(r"" + self.BaseDir + "Output\\Name2.txt")
     except:
       pass
-    name2 = str(self.Name2.get())
-    file = open(r"" + self.BaseDir + "Output\\Name2.txt", "w")
-    file.write(name2)
-    file.close()
     try:
       os.remove(r"" + self.BaseDir + "Output\\CommentatorList.txt")
     except:
       pass
-    comment = str(self.Commentators.get())
-    file = open(r"" + self.BaseDir + "Output\\CommentatorList.txt", "w")
-    file.write(comment)
-    file.close()
     try:
       os.remove(r"" + self.BaseDir + "Output\\BracketPhase.txt")
     except:
       pass
-    phase = str(self.BracketPhase.get())
-    file = open(r"" + self.BaseDir + "Output\\BracketPhase.txt", "w")
-    file.write(phase)
-    file.close()
     
-    """try:
-      self.obsWindow = self.obsInstance.top_window()
-      self.obsWindow.type_keys("^%h")
+    try:
+      name1 = str(self.Name1.get())
+      file = open(r"" + self.BaseDir + "Output\\Name1.txt", "w")
+      file.write(name1)
+      file.close()
     except:
-      pass"""
+      self.statusText['text'] = "Error - Check Team 1 Text - Are there non-ASCII characters there?"
+      self.statusText['fg'] = "red"
+      failed = True
+      
+    try:
+      name2 = str(self.Name2.get())
+      file = open(r"" + self.BaseDir + "Output\\Name2.txt", "w")
+      file.write(name2)
+      file.close()
+    except:
+      self.statusText['text'] = "Error - Check Team 2 Text - Are there non-ASCII characters there?"
+      self.statusText['fg'] = "red"
+      failed = True
+      
+    try:
+      comment = str(self.Commentators.get())
+      file = open(r"" + self.BaseDir + "Output\\CommentatorList.txt", "w")
+      file.write(comment)
+      file.close()
+    except:
+      self.statusText['text'] = "Error - Check Commentator List - Are there non-ASCII characters there?"
+      self.statusText['fg'] = "red"
+      failed = True
+      
+    try:
+      phase = str(self.BracketPhase.get())
+      file = open(r"" + self.BaseDir + "Output\\BracketPhase.txt", "w")
+      file.write(phase)
+      file.close()
+    except:
+      self.statusText['text'] = "Error - Check Bracket Phase - Are there non-ASCII characters there?"
+      self.statusText['fg'] = "red"
+      failed = True
     
     try:
       self.outputImage(self.SkinP1.get(), self.SkinP3.get(), r"" + self.BaseDir + "Output\\", 1)
       self.outputImage(self.SkinP2.get(), self.SkinP4.get(), r"" + self.BaseDir + "Output\\", 2)
     except:
-      self.statusText['text'] = "Failed - Error!"
+      self.statusText['text'] = "Error - Check Skin Selector Panels - Did you select a skin for each player?"
+      self.statusText['fg'] = "red"
       failed = True
-    
+      
     """try:
       self.obsWindow.type_keys("^%s")
     except:
       pass"""
-    
+      
     p1s = self.Score1.get()
     p2s = self.Score2.get()
-    shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p1s)+".png", r"" + self.BaseDir + "Output\\p1Score.png")
-    shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p2s)+".png", r"" + self.BaseDir + "Output\\p2Score.png")
+    #shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p1s)+".png", r"" + self.BaseDir + "Output\\p1Score.png")
+    #shutil.copyfile(self.dir + "_ScoreNumbers\\_num_"+str(p2s)+".png", r"" + self.BaseDir + "Output\\p2Score.png")
+    
+    try:
+      self.updateScore()
+    except:
+      self.statusText['text'] = "Error - Check Score Inputs - Is it above 999 or below 0?"
+      self.statusText['fg'] = "red"
+      failed = True
     
     if not failed:
-      self.statusText['text'] = "Job Completed!"
+      self.statusText['text'] = "Stream Update Completed!"
+      self.statusText['fg'] = "green"
 
   def outputImage(self, skinDir1, skinDir2, outputDir, num):
     if self.outWidth == None or self.outHeight == None:
